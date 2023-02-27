@@ -42,9 +42,9 @@ public class ExampleQuerySystem : QuerySystem
         CreateQuery()
             .WithAll<PlayerComponent, ViewComponent, Reference<Transform>>()
             .WithNone<Dead>()
-            .ForEach((Entity entity, ref Reference<Transform> transformRerefence, ref ViewComponent viewComponent) =>
+            .ForEach((Entity entity, ref PlayerComponent player, ref ViewComponent viewComponent) =>
             {
-                testQueryComponent.value++;
+                player.value++;
             });
     }
 }
