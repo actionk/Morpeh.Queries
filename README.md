@@ -2,9 +2,14 @@
 
 Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.com/scellecs/morpeh).
 
+* Lambda syntax for querying entities & their Components
+* Supporting jobs & burst
+  * Automatic jobs scheduling
+  * Jobs dependencies
+
 ## Table of Contents
 
-- [Example](#example)
+- [Examples](#examples)
 - [Comparison & Performance](#comparison--performance)
     - [Before](#before)
     - [After](#after)
@@ -26,7 +31,7 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [OnAwake & OnUpdate](#onawake--onupdate)
 - [License](#license)
 
-## Example
+## Examples
 
 ```csharp
 public class ExampleQuerySystem : QuerySystem
@@ -40,6 +45,22 @@ public class ExampleQuerySystem : QuerySystem
             {
                 testQueryComponent.value++;
             });
+    }
+}
+```
+
+```csharp
+public class CustomSequentialJobQueriesTestSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        var jobHandle = CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<CustomTestJobParallel>();
+
+        CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<CustomTestJobParallelAfterwards>(jobHandle);
     }
 }
 ```
