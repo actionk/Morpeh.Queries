@@ -2,6 +2,25 @@
 
 Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.com/scellecs/morpeh).
 
+## Table of Contents
+
+- [Example](#example)
+- [Comparison & Performance](#comparison--performance)
+    - [Before](#before)
+    - [After](#after)
+- [Usage](#usage)
+    - [Creating a query](#creating-a-query)
+    - [.WithAll](#withall)
+    - [.WithNone](#withnone)
+    - [.With<T>](#with-t)
+    - [.Without<T>](#without-t)
+    - [.Also](#also)
+    - [.ForEach](#foreach)
+- [Options](#options)
+    - [Automatic Validation](#automatic-validation)
+    - [OnAwake & OnUpdate](#onawake--onupdate)
+- [License](#license)
+
 ## Example
 
 ```csharp
@@ -20,7 +39,7 @@ public class ExampleQuerySystem : QuerySystem
 }
 ```
 
-## Comparison
+## Comparison & Performance
 
 ### Before
 
@@ -103,16 +122,26 @@ As you can see, we're using a `QuerySystem` abstract class that implements the q
 
 Performance-wise, it's a bit slower than the optimized solution that we've looked previously (because of using lambdas), but still faster that the "default" one and is **much** smaller than both of them.
 
-## Documentation
+## Usage
 
-### CreateQuery()
+### Creating a query
 
-CreateQuery() returns an object of type QueryConfigurer, that has many overloads for filtering that you can apply before describing the update lambda. Examples are as follows:
+You should define all the queries inside `Configure` method.
+
+`CreateQuery()` returns an object of type `QueryConfigurer` that has many overloads for filtering that you can apply before describing the `ForEach` lambda. 
+
+You can also **combine multiple filtering** calls in a sequence before describing the `ForEach` lambda:
+
+```csharp
+CreateQuery()
+    .WithAll<TestComponent, DamageComponent>
+    .WithNone<Dead, Inactive>()
+    .ForEach(...)
+```
 
 ### .WithAll
 
 Selects all the entities that have **all** of the specified components.
-
 
 ```csharp
 CreateQuery()
@@ -170,17 +199,6 @@ CreateQuery()
     .ForEach(...)
 ```
 
-### Sequencing
-
-Multiple filtering calls can be used in a sequence before describing the ForEach lambda:
-
-```csharp
-CreateQuery()
-    .WithAll<TestComponent, DamageComponent>
-    .WithNone<Dead, Inactive>()
-    .ForEach(...)
-```
-
 ### .ForEach
 
 There are multiple supported options for describing a lambda:
@@ -192,14 +210,18 @@ There are multiple supported options for describing a lambda:
 
 You can either receive the entity as the 1st parameter or you can just skip it if you only need the components.
 
-#### Restrictions:
+Supported up to 8 components (you can extend it if you want)
+
+**Restrictions**
 
 * You can only receive components as **ref**
 * You can't receive Aspects
 
+## Options
+
 ### Automatic Validation
 
-Be default, the query engine applies checks when you create a query: all the components that you're using in `ForEach` should also be defined in a query using `With` or `Without` to guarantee that the components exist on the entities that the resulting `Filter` returns.
+Be default, the query engine applies checks when you create a query: all the components that you're using in `ForEach` should also be defined in a query using `With` or `WithAll` to guarantee that the components exist on the entities that the resulting `Filter` returns.
 
 This validation **only happens once** when creating a query so it doesn't affect the performance of your `ForEach` method! 
 
@@ -214,7 +236,7 @@ CreateQuery()
 
 ### OnAwake & OnUpdate
 
-You can override `OnAwake` & `OnUpdate` methods if you want to:
+You can override `OnAwake` & `OnUpdate` methods of `QuerySystem` if you want to:
 
 ```charp
 public override void OnAwake()
