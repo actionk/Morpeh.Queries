@@ -1,12 +1,12 @@
 # Morpeh.Queries [![Github license](https://img.shields.io/github/license/codewriter-packages/Morpeh.Events.svg?style=flat-square)](#) [![Unity 2020](https://img.shields.io/badge/Unity-2020+-2296F3.svg?style=flat-square)](#) ![GitHub package.json version](https://img.shields.io/github/package-json/v/actionk/Morpeh.Queries?style=flat-square)
 
-**Fast** DOTS-like entity queries using lambdas in [Morpeh ECS](https://github.com/scellecs/morpeh).
+Fast DOTS-like entity queries plugin using lambdas for [Morpeh ECS](https://github.com/scellecs/morpeh).
 
 ## Example
 
 ### Before
 
-Usually, regular system in Morpeh is implemented this way:
+Usually, the regular system in Morpeh is implemented this way:
 
 ```csharp
 public class NoQueriesTestSystem : UpdateSystem
@@ -29,11 +29,11 @@ public class NoQueriesTestSystem : UpdateSystem
 }
 ```
 
-We will be running tests for this and other systems for **1 000 000** entities and **100** iterations;
+There will be `1 000 000` entities and `100` iterations of testing for this and the other examples;
 
 Results: **14.43** seconds.
 
-This can be optimized by storing the reference to Stash<T> that contains all the components for different entities:
+In order to optimize this, we can store a reference to the `Stash<T>` that contains all the components of type `TestComponent` for different entities:
 
 ```csharp
 public class NoQueriesUsingStashTestSystem : UpdateSystem
@@ -97,9 +97,6 @@ Selects all the entities that have **all** of the specified components.
 
 
 ```csharp
-
-// WithAll -> for up to 8 arguments
-
 CreateQuery()
     .WithAll<TestComponent, DamageComponent>()
     .ForEach(...)
@@ -121,8 +118,6 @@ Filter = Filter.With<TestComponent>().With<DamageComponent>().With<PlayerCompone
 Selects all the entities that have **none** of the specified components.
 
 ```csharp
-// WithNone -> for up to 8 arguments
-
 CreateQuery()
     .WithNone<Dead, Inactive>()
     .ForEach(...)
@@ -216,3 +211,8 @@ public override void OnUpdate(float newDeltaTime)
 ```
 
 Don't forget to call the base method, otherwise `Configure` and/or queries execution won't happen!
+
+
+## License
+
+Morpeh.Queries is [MIT licensed](./LICENSE.md).
