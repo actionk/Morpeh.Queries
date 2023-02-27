@@ -125,6 +125,79 @@ As you can see, we're using a `QuerySystem` abstract class that implements the q
 
 Performance-wise, it's a bit slower than the optimized solution that we've looked previously (because of using lambdas), but still faster that the "default" one and is **much** smaller than both of them.
 
+### After (using Burst)
+
+In order to optimize it even further, one can use burst jobs. Firstly, let's create a job:
+
+```csharp
+[BurstCompile]
+public struct CustomTestJobParallel : IJobParallelFor
+{
+    [ReadOnly]
+    public NativeFilter entities;
+
+    public NativeStash<TestComponent> testComponentStash;
+
+    public void Execute(int index)
+    {
+        var entityId = entities[index];
+        ref var component = ref testComponentStash.Get(entityId, out var exists);
+        if (exists)
+        {
+            component.value++;
+        }
+    }
+}
+```
+
+Now we should create a system that will run the job. Let's check how it's done using Morpeh:
+
+```csharp
+public class NoQueriesUsingStashJobsTestSystem : UpdateSystem
+{
+    private Filter filter;
+    private Stash<TestComponent> stash;
+
+    public override void OnAwake()
+    {
+        filter = World.Filter.With<TestComponent>();
+        stash = World.GetStash<TestComponent>();
+    }
+
+    public override void OnUpdate(float deltaTime)
+    {
+        var nativeFilter = filter.AsNative();
+        var parallelJob = new CustomTestJobParallel
+        {
+            entities = nativeFilter,
+            testComponentStash = stash.AsNative()
+        };
+        var parallelJobHandle = parallelJob.Schedule(nativeFilter.length, 64);
+        parallelJobHandle.Complete();
+    }
+}
+```
+
+Results: `1.67` seconds (-83%). 
+
+Jobs are much faster, as you can see, but it requires even more preparations. Let's remove this boilerplate by using this plugin:
+
+```csharp
+public class CustomJobQueriesTestSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<CustomTestJobParallel>();
+    }
+}
+```
+
+Results: `1.69` seconds (+1%).
+
+This approach uses `Reflections API` to fill in all the required parameters in the job (`NativeFilter` & `NativeStash<T>`), but the code is well optimized and it affect performance very slightly. Supports as many stashes as you want to. 
+
 ## Usage
 
 ### Creating a query
@@ -226,17 +299,23 @@ You can also use Unity's Jobs system & Burst to run the calculations in backgrou
 
 ### .ScheduleJob
 
+If you want to use Unity's Jobs with Burst, you can create your job and call `ScheduleJob<YourJobType>` to schedule it. All the fields (`NativeFilter` & `NativeStash<T>`) will be injected automatically!
+
+Example
+
 ```csharp
 [BurstCompile]
-public struct TestJobParallelForReference : IEntityQueryJobParallelFor<TestComponent>
+public struct CustomTestJobParallel : IJobParallelFor
 {
-    public NativeFilter Entities { get; set; }
-    public NativeStash<TestComponent> ComponentT1 { get; set; }
+    [ReadOnly]
+    public NativeFilter entities;
+
+    public NativeStash<TestComponent> testComponentStash;
 
     public void Execute(int index)
     {
-        var entityId = Entities[index];
-        ref var component = ref ComponentT1.Get(entityId, out var exists);
+        var entityId = entities[index];
+        ref var component = ref testComponentStash.Get(entityId, out var exists);
         if (exists)
         {
             component.value++;
@@ -244,26 +323,26 @@ public struct TestJobParallelForReference : IEntityQueryJobParallelFor<TestCompo
     }
 }
 
-public class JobsQueriesTestSystem : QuerySystem
+public class CustomJobQueriesTestSystem : QuerySystem
 {
     protected override void Configure()
     {
         CreateQuery()
             .With<TestComponent>()
-            .ScheduleJob<TestJobParallelForReference, TestComponent>();
+            .ScheduleJob<CustomTestJobParallel>();
     }
 }
 ```
 
-Results: ~2.40 seconds (`1 000 000` entities & `100` iterations)
+Results: ~1.6 seconds (`1 000 000` entities & `100` iterations)
 
-Supports up to `4` arguments (you can extend it if you want).
+Supports as many NativeStash's as you want.
 
 ### .ForEachNative
 
 ```csharp
 [BurstCompile]
-public struct CustomTestJobParallelForReference : IJobParallelFor
+public struct CustomTestJobParallel : IJobParallelFor
 {
     [ReadOnly]
     public NativeFilter entities;
@@ -289,7 +368,7 @@ public class CustomJobsQueriesTestSystem : QuerySystem
             .With<TestComponent>()
             .ForEachNative((NativeFilter entities, NativeStash<TestComponent> testComponentStash) =>
             {
-                var parallelJob = new CustomTestJobParallelForReference
+                var parallelJob = new CustomTestJobParallel
                 {
                     entities = entities,
                     testComponentStash = testComponentStash
