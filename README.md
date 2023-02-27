@@ -27,6 +27,7 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [Waiting for another job to finish](#waiting-for-another-job-to-finish)
     - [.ForEachNative](#foreachnative)
 - [Additions](#additions)
+    - [Globals](#globals)
     - [Automatic Validation](#automatic-validation)
     - [OnAwake & OnUpdate](#onawake--onupdate)
 - [License](#license)
