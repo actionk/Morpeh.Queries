@@ -79,7 +79,7 @@ public class WithQueriesSystem : QuerySystem
 }
 ```
 
-Results: **9.87** seconds (+10%)
+Results: **9.45** seconds (+5%)
 
 As you can see, we're using a `QuerySystem` abstract class that implements the queries inside, therefore we have no `OnUpdate` method anymore. If you need the `deltaTime` though, you can acquire it using `protected float deltaTime` field in `QuerySystem`, which is updated every time `QuerySystem.OnUpdate()` is called.
 
@@ -198,3 +198,21 @@ CreateQuery()
     .SkipValidation(true)
     .ForEach(...)
 ```
+
+### OnAwake & OnUpdate
+
+You can override `OnAwake` & `OnUpdate` methods if you want to:
+
+```charp
+public override void OnAwake()
+{
+    base.OnAwake();
+}
+
+public override void OnUpdate(float newDeltaTime)
+{
+    base.OnUpdate(newDeltaTime);
+}
+```
+
+Don't forget to call the base method, otherwise `Configure` and/or queries execution won't happen!
