@@ -39,7 +39,13 @@ namespace Scellecs.Morpeh
             }
         }
 
-        public static QueryConfigurer ScheduleJob<T>(this QueryConfigurer queryConfigurer, int batchCount = 64)
+        public static QueryConfigurerJobHandle ScheduleJob<T>(this QueryConfigurer queryConfigurer, QueryConfigurerJobHandle waitForJobHandle)
+            where T : struct, IJobParallelFor
+        {
+            return ScheduleJob<T>(queryConfigurer, 64, waitForJobHandle);
+        }
+
+        public static QueryConfigurerJobHandle ScheduleJob<T>(this QueryConfigurer queryConfigurer, int batchCount = 64, QueryConfigurerJobHandle waitForJobHandle = default)
             where T : struct, IJobParallelFor
         {
             FieldInfo nativeFilterField = null;
@@ -69,21 +75,23 @@ namespace Scellecs.Morpeh
                 }
             }
 
-            queryConfigurer.RegisterExecutor(() =>
+            var jobHandle = new QueryConfigurerJobHandle();
+            queryConfigurer.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 var parallelJob = new T();
                 object parallelJobReference = parallelJob;
-                nativeFilterField!.SetValue(parallelJobReference, nativeFilter);
+                nativeFilterField?.SetValue(parallelJobReference, nativeFilter);
                 for (var i = 0; i < stashFields.length; i++)
                     stashFields.data[i].SetValue(parallelJobReference, stashes.data[i].GetNativeStash());
                 parallelJob = (T)parallelJobReference;
 
-                var parallelJobHandle = parallelJob.Schedule(nativeFilter.length, batchCount);
-                parallelJobHandle.Complete();
+                var parallelJobHandle = parallelJob.Schedule(nativeFilter.length, batchCount, waitForJobHandle?.jobHandle ?? default);
+                jobHandle.jobHandle = parallelJobHandle;
             });
 
-            return queryConfigurer;
+            queryConfigurer.System.AddJobHandle(jobHandle);
+            return jobHandle;
         }
 
         // ------------------------------------------------- //
@@ -101,7 +109,7 @@ namespace Scellecs.Morpeh
                 QueryConfigurerHelper.ValidateRequest(queryConfigurer, filter, QueryConfigurerHelper.GetRequestedTypeInfo<T1>());
 
             var stashT1 = queryConfigurer.World.GetStash<T1>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative());
@@ -127,7 +135,7 @@ namespace Scellecs.Morpeh
 
             var stashT1 = queryConfigurer.World.GetStash<T1>();
             var stashT2 = queryConfigurer.World.GetStash<T2>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative());
@@ -157,7 +165,7 @@ namespace Scellecs.Morpeh
             var stashT1 = queryConfigurer.World.GetStash<T1>();
             var stashT2 = queryConfigurer.World.GetStash<T2>();
             var stashT3 = queryConfigurer.World.GetStash<T3>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative(), stashT3.AsNative());
@@ -191,7 +199,7 @@ namespace Scellecs.Morpeh
             var stashT2 = queryConfigurer.World.GetStash<T2>();
             var stashT3 = queryConfigurer.World.GetStash<T3>();
             var stashT4 = queryConfigurer.World.GetStash<T4>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative(), stashT3.AsNative(), stashT4.AsNative());
@@ -229,7 +237,7 @@ namespace Scellecs.Morpeh
             var stashT3 = queryConfigurer.World.GetStash<T3>();
             var stashT4 = queryConfigurer.World.GetStash<T4>();
             var stashT5 = queryConfigurer.World.GetStash<T5>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative(), stashT3.AsNative(), stashT4.AsNative(), stashT5.AsNative());
@@ -271,7 +279,7 @@ namespace Scellecs.Morpeh
             var stashT4 = queryConfigurer.World.GetStash<T4>();
             var stashT5 = queryConfigurer.World.GetStash<T5>();
             var stashT6 = queryConfigurer.World.GetStash<T6>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative(), stashT3.AsNative(), stashT4.AsNative(),

@@ -18,6 +18,8 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [.ForEach](#foreach)
 - [Jobs & Burst](#jobs--burst)
     - [.ScheduleJob](#schedulejob)
+    - [Scheduling Parallel Jobs](#scheduling-paralell-jobs)
+    - [Waiting for another job to finish](#waiting-for-another-job-to-finish)
     - [.ForEachNative](#foreachnative)
 - [Options](#options)
     - [Automatic Validation](#automatic-validation)
@@ -297,6 +299,8 @@ Supported up to 8 components (you can extend it if you want)
 
 You can also use Unity's Jobs system & Burst to run the calculations in background when executing a query instead of running it on the main thread. Use `ScheduleJob` for that.
 
+Note: you should define MORPEH_BURST in your project in order to be able to use Burst in Morpeh.
+
 ### .ScheduleJob
 
 If you want to use Unity's Jobs with Burst, you can create your job and call `ScheduleJob<YourJobType>` to schedule it. All the fields (`NativeFilter` & `NativeStash<T>`) will be injected automatically!
@@ -338,7 +342,51 @@ Results: ~1.6 seconds (`1 000 000` entities & `100` iterations)
 
 Supports as many NativeStash's as you want.
 
+### Scheduling Parallel Jobs
+
+You can schedule multiple jobs in one systems as well:
+
+```csharp
+public class CustomParallelJobQueriesTestSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<CustomTestJobParallel>();
+
+        CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<CustomTestJobParallelValue2>();
+    }
+}
+```
+
+This way they will be executed in parallel and the system will wait for both jobs to finish.
+
+### Waiting for another job to finish
+
+You can also force one job to be dependent on another (to only execute when the 1st is finished):
+
+```csharp
+public class CustomSequentialJobQueriesTestSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        var jobHandle = CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<CustomTestJobParallel>();
+
+        CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<CustomTestJobParallelValue2>(jobHandle);
+    }
+}
+```
+
 ### .ForEachNative
+
+You can also just receive the native filter & stashes if you want to do your custom logic.
 
 ```csharp
 [BurstCompile]

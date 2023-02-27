@@ -4,6 +4,8 @@ namespace Scellecs.Morpeh
 {
     public class QueryConfigurer
     {
+        private readonly QuerySystem m_querySystem;
+        
         public Filter Filter { get; private set; }
         public World World => m_querySystem.World;
         public QuerySystem System => m_querySystem;
@@ -23,17 +25,6 @@ namespace Scellecs.Morpeh
             return this;
         }
         
-#endregion
-
-#region Internal
-
-        private readonly QuerySystem m_querySystem;
-
-        internal void RegisterExecutor(Action executor)
-        {
-            m_querySystem.AddExecutor(executor);
-        }
-
 #endregion
 
 #region Alternatives

@@ -64,7 +64,7 @@ namespace Scellecs.Morpeh
                 ValidateRequest(queryConfigurer, filter, GetRequestedTypeInfo<T1>());
 
             var stashT1 = queryConfigurer.World.GetStash<T1>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -85,7 +85,7 @@ namespace Scellecs.Morpeh
                 ValidateRequest(queryConfigurer, filter, GetRequestedTypeInfo<T1>());
 
             var stashT1 = queryConfigurer.World.GetStash<T1>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -113,7 +113,7 @@ namespace Scellecs.Morpeh
 
             var stashT1 = queryConfigurer.World.GetStash<T1>();
             var stashT2 = queryConfigurer.World.GetStash<T2>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -137,7 +137,7 @@ namespace Scellecs.Morpeh
 
             var stashT1 = queryConfigurer.World.GetStash<T1>();
             var stashT2 = queryConfigurer.World.GetStash<T2>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -167,7 +167,7 @@ namespace Scellecs.Morpeh
             var stashT1 = queryConfigurer.World.GetStash<T1>();
             var stashT2 = queryConfigurer.World.GetStash<T2>();
             var stashT3 = queryConfigurer.World.GetStash<T3>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -194,7 +194,7 @@ namespace Scellecs.Morpeh
             var stashT1 = queryConfigurer.World.GetStash<T1>();
             var stashT2 = queryConfigurer.World.GetStash<T2>();
             var stashT3 = queryConfigurer.World.GetStash<T3>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -227,7 +227,7 @@ namespace Scellecs.Morpeh
             var stashT2 = queryConfigurer.World.GetStash<T2>();
             var stashT3 = queryConfigurer.World.GetStash<T3>();
             var stashT4 = queryConfigurer.World.GetStash<T4>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -257,7 +257,7 @@ namespace Scellecs.Morpeh
             var stashT2 = queryConfigurer.World.GetStash<T2>();
             var stashT3 = queryConfigurer.World.GetStash<T3>();
             var stashT4 = queryConfigurer.World.GetStash<T4>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -295,7 +295,7 @@ namespace Scellecs.Morpeh
             var stashT3 = queryConfigurer.World.GetStash<T3>();
             var stashT4 = queryConfigurer.World.GetStash<T4>();
             var stashT5 = queryConfigurer.World.GetStash<T5>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -329,7 +329,7 @@ namespace Scellecs.Morpeh
             var stashT3 = queryConfigurer.World.GetStash<T3>();
             var stashT4 = queryConfigurer.World.GetStash<T4>();
             var stashT5 = queryConfigurer.World.GetStash<T5>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -371,7 +371,7 @@ namespace Scellecs.Morpeh
             var stashT4 = queryConfigurer.World.GetStash<T4>();
             var stashT5 = queryConfigurer.World.GetStash<T5>();
             var stashT6 = queryConfigurer.World.GetStash<T6>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -408,7 +408,7 @@ namespace Scellecs.Morpeh
             var stashT4 = queryConfigurer.World.GetStash<T4>();
             var stashT5 = queryConfigurer.World.GetStash<T5>();
             var stashT6 = queryConfigurer.World.GetStash<T6>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -453,7 +453,7 @@ namespace Scellecs.Morpeh
             var stashT5 = queryConfigurer.World.GetStash<T5>();
             var stashT6 = queryConfigurer.World.GetStash<T6>();
             var stashT7 = queryConfigurer.World.GetStash<T7>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -494,7 +494,7 @@ namespace Scellecs.Morpeh
             var stashT5 = queryConfigurer.World.GetStash<T5>();
             var stashT6 = queryConfigurer.World.GetStash<T6>();
             var stashT7 = queryConfigurer.World.GetStash<T7>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -542,7 +542,7 @@ namespace Scellecs.Morpeh
             var stashT6 = queryConfigurer.World.GetStash<T6>();
             var stashT7 = queryConfigurer.World.GetStash<T7>();
             var stashT8 = queryConfigurer.World.GetStash<T8>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
@@ -587,7 +587,7 @@ namespace Scellecs.Morpeh
             var stashT6 = queryConfigurer.World.GetStash<T6>();
             var stashT7 = queryConfigurer.World.GetStash<T7>();
             var stashT8 = queryConfigurer.World.GetStash<T8>();
-            queryConfigurer.RegisterExecutor(() =>
+            queryConfigurer.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
                 {
