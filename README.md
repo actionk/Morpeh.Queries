@@ -4,6 +4,24 @@ Fast DOTS-like entity queries plugin using lambdas for [Morpeh ECS](https://gith
 
 ## Example
 
+```csharp
+public class ExampleQuerySystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        CreateQuery()
+            .WithAll<PlayerComponent, ViewComponent, Reference<Transform>>()
+            .WithNone<Dead>()
+            .ForEach((Entity entity, ref Reference<Transform> transformRerefence, ref ViewComponent viewComponent) =>
+            {
+                testQueryComponent.value++;
+            });
+    }
+}
+```
+
+## Comparison
+
 ### Before
 
 Usually, the regular system in Morpeh is implemented this way:
