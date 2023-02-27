@@ -7,7 +7,7 @@ using Unity.Jobs;
 
 namespace Scellecs.Morpeh
 {
-    public static class QueryConfigurerJobsExtensions
+    public static class QueryBuilderJobsExtensions
     {
         // ------------------------------------------------- //
         // Dynamic parameters
@@ -39,20 +39,20 @@ namespace Scellecs.Morpeh
             }
         }
 
-        public static QueryConfigurerJobHandle ScheduleJob<T>(this QueryConfigurer queryConfigurer, QueryConfigurerJobHandle waitForJobHandle)
+        public static QueryBuilderJobHandle ScheduleJob<T>(this QueryBuilder queryBuilder, QueryBuilderJobHandle waitForJobHandle)
             where T : struct, IJobParallelFor
         {
-            return ScheduleJob<T>(queryConfigurer, 64, waitForJobHandle);
+            return ScheduleJob<T>(queryBuilder, 64, waitForJobHandle);
         }
 
-        public static QueryConfigurerJobHandle ScheduleJob<T>(this QueryConfigurer queryConfigurer, int batchCount = 64, QueryConfigurerJobHandle waitForJobHandle = default)
+        public static QueryBuilderJobHandle ScheduleJob<T>(this QueryBuilder queryBuilder, int batchCount = 64, QueryBuilderJobHandle waitForJobHandle = default)
             where T : struct, IJobParallelFor
         {
             FieldInfo nativeFilterField = null;
             var stashFields = new FastList<FieldInfo>();
             var stashes = new FastList<IStashWrapper>();
 
-            var filter = queryConfigurer.Filter;
+            var filter = queryBuilder.Build();
             var type = typeof(T);
             foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
             {
@@ -66,17 +66,17 @@ namespace Scellecs.Morpeh
                         .GetField("info", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
                     var typeInfo = (CommonTypeIdentifier.TypeInfo)infoFieldInfo!.GetValue(null);
 
-                    QueryConfigurerHelper.ValidateRequest(queryConfigurer, filter, new QueryConfigurerHelper.RequestedTypeInfo(requestedComponentType, typeInfo.id));
+                    QueryBuilderHelper.ValidateRequest(queryBuilder, filter, new QueryBuilderHelper.RequestedTypeInfo(requestedComponentType, typeInfo.id));
 
                     stashFields.Add(field);
-                    var stash = queryConfigurer.World.GetStash(typeInfo.id);
+                    var stash = queryBuilder.World.GetStash(typeInfo.id);
                     var stashWrapper = (IStashWrapper)Activator.CreateInstance(typeof(StashWrapper<>).MakeGenericType(requestedComponentType), stash);
                     stashes.Add(stashWrapper);
                 }
             }
 
-            var jobHandle = new QueryConfigurerJobHandle();
-            queryConfigurer.System.AddExecutor(() =>
+            var jobHandle = new QueryBuilderJobHandle();
+            queryBuilder.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 var parallelJob = new T();
@@ -90,7 +90,7 @@ namespace Scellecs.Morpeh
                 jobHandle.jobHandle = parallelJobHandle;
             });
 
-            queryConfigurer.System.AddJobHandle(jobHandle);
+            queryBuilder.System.AddJobHandle(jobHandle);
             return jobHandle;
         }
 
@@ -101,20 +101,20 @@ namespace Scellecs.Morpeh
         public delegate void E<T1>(NativeFilter entities, NativeStash<T1> component1)
             where T1 : unmanaged, IComponent;
 
-        public static QueryConfigurer ForEachNative<T1>(this QueryConfigurer queryConfigurer, E<T1> callback)
+        public static QueryBuilder ForEachNative<T1>(this QueryBuilder queryBuilder, E<T1> callback)
             where T1 : unmanaged, IComponent
         {
-            var filter = queryConfigurer.Filter;
-            if (!queryConfigurer.SkipValidationEnabled)
-                QueryConfigurerHelper.ValidateRequest(queryConfigurer, filter, QueryConfigurerHelper.GetRequestedTypeInfo<T1>());
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>());
 
-            var stashT1 = queryConfigurer.World.GetStash<T1>();
-            queryConfigurer.System.AddExecutor(() =>
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            queryBuilder.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative());
             });
-            return queryConfigurer;
+            return queryBuilder;
         }
 
         // ------------------------------------------------- //
@@ -125,22 +125,22 @@ namespace Scellecs.Morpeh
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent;
 
-        public static QueryConfigurer ForEachNative<T1, T2>(this QueryConfigurer queryConfigurer, E<T1, T2> callback)
+        public static QueryBuilder ForEachNative<T1, T2>(this QueryBuilder queryBuilder, E<T1, T2> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
         {
-            var filter = queryConfigurer.Filter;
-            if (!queryConfigurer.SkipValidationEnabled)
-                QueryConfigurerHelper.ValidateRequest(queryConfigurer, filter, QueryConfigurerHelper.GetRequestedTypeInfo<T1>(), QueryConfigurerHelper.GetRequestedTypeInfo<T2>());
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>());
 
-            var stashT1 = queryConfigurer.World.GetStash<T1>();
-            var stashT2 = queryConfigurer.World.GetStash<T2>();
-            queryConfigurer.System.AddExecutor(() =>
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            queryBuilder.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative());
             });
-            return queryConfigurer;
+            return queryBuilder;
         }
 
         // ------------------------------------------------- //
@@ -152,25 +152,25 @@ namespace Scellecs.Morpeh
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent;
 
-        public static QueryConfigurer ForEachNative<T1, T2, T3>(this QueryConfigurer queryConfigurer, E<T1, T2, T3> callback)
+        public static QueryBuilder ForEachNative<T1, T2, T3>(this QueryBuilder queryBuilder, E<T1, T2, T3> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
         {
-            var filter = queryConfigurer.Filter;
-            if (!queryConfigurer.SkipValidationEnabled)
-                QueryConfigurerHelper.ValidateRequest(queryConfigurer, filter, QueryConfigurerHelper.GetRequestedTypeInfo<T1>(), QueryConfigurerHelper.GetRequestedTypeInfo<T2>(),
-                    QueryConfigurerHelper.GetRequestedTypeInfo<T3>());
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>(),
+                    QueryBuilderHelper.GetRequestedTypeInfo<T3>());
 
-            var stashT1 = queryConfigurer.World.GetStash<T1>();
-            var stashT2 = queryConfigurer.World.GetStash<T2>();
-            var stashT3 = queryConfigurer.World.GetStash<T3>();
-            queryConfigurer.System.AddExecutor(() =>
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            var stashT3 = queryBuilder.World.GetStash<T3>();
+            queryBuilder.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative(), stashT3.AsNative());
             });
-            return queryConfigurer;
+            return queryBuilder;
         }
 
         // ------------------------------------------------- //
@@ -184,27 +184,27 @@ namespace Scellecs.Morpeh
             where T3 : unmanaged, IComponent
             where T4 : unmanaged, IComponent;
 
-        public static QueryConfigurer ForEachNative<T1, T2, T3, T4>(this QueryConfigurer queryConfigurer, E<T1, T2, T3, T4> callback)
+        public static QueryBuilder ForEachNative<T1, T2, T3, T4>(this QueryBuilder queryBuilder, E<T1, T2, T3, T4> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
             where T4 : unmanaged, IComponent
         {
-            var filter = queryConfigurer.Filter;
-            if (!queryConfigurer.SkipValidationEnabled)
-                QueryConfigurerHelper.ValidateRequest(queryConfigurer, filter, QueryConfigurerHelper.GetRequestedTypeInfo<T1>(), QueryConfigurerHelper.GetRequestedTypeInfo<T2>(),
-                    QueryConfigurerHelper.GetRequestedTypeInfo<T3>(), QueryConfigurerHelper.GetRequestedTypeInfo<T4>());
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>(),
+                    QueryBuilderHelper.GetRequestedTypeInfo<T3>(), QueryBuilderHelper.GetRequestedTypeInfo<T4>());
 
-            var stashT1 = queryConfigurer.World.GetStash<T1>();
-            var stashT2 = queryConfigurer.World.GetStash<T2>();
-            var stashT3 = queryConfigurer.World.GetStash<T3>();
-            var stashT4 = queryConfigurer.World.GetStash<T4>();
-            queryConfigurer.System.AddExecutor(() =>
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            var stashT3 = queryBuilder.World.GetStash<T3>();
+            var stashT4 = queryBuilder.World.GetStash<T4>();
+            queryBuilder.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative(), stashT3.AsNative(), stashT4.AsNative());
             });
-            return queryConfigurer;
+            return queryBuilder;
         }
 
         // ------------------------------------------------- //
@@ -220,29 +220,29 @@ namespace Scellecs.Morpeh
             where T4 : unmanaged, IComponent
             where T5 : unmanaged, IComponent;
 
-        public static QueryConfigurer ForEachNative<T1, T2, T3, T4, T5>(this QueryConfigurer queryConfigurer, E<T1, T2, T3, T4, T5> callback)
+        public static QueryBuilder ForEachNative<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, E<T1, T2, T3, T4, T5> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
             where T4 : unmanaged, IComponent
             where T5 : unmanaged, IComponent
         {
-            var filter = queryConfigurer.Filter;
-            if (!queryConfigurer.SkipValidationEnabled)
-                QueryConfigurerHelper.ValidateRequest(queryConfigurer, filter, QueryConfigurerHelper.GetRequestedTypeInfo<T1>(), QueryConfigurerHelper.GetRequestedTypeInfo<T2>(),
-                    QueryConfigurerHelper.GetRequestedTypeInfo<T3>(), QueryConfigurerHelper.GetRequestedTypeInfo<T4>(), QueryConfigurerHelper.GetRequestedTypeInfo<T5>());
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>(),
+                    QueryBuilderHelper.GetRequestedTypeInfo<T3>(), QueryBuilderHelper.GetRequestedTypeInfo<T4>(), QueryBuilderHelper.GetRequestedTypeInfo<T5>());
 
-            var stashT1 = queryConfigurer.World.GetStash<T1>();
-            var stashT2 = queryConfigurer.World.GetStash<T2>();
-            var stashT3 = queryConfigurer.World.GetStash<T3>();
-            var stashT4 = queryConfigurer.World.GetStash<T4>();
-            var stashT5 = queryConfigurer.World.GetStash<T5>();
-            queryConfigurer.System.AddExecutor(() =>
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            var stashT3 = queryBuilder.World.GetStash<T3>();
+            var stashT4 = queryBuilder.World.GetStash<T4>();
+            var stashT5 = queryBuilder.World.GetStash<T5>();
+            queryBuilder.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative(), stashT3.AsNative(), stashT4.AsNative(), stashT5.AsNative());
             });
-            return queryConfigurer;
+            return queryBuilder;
         }
 
         // ------------------------------------------------- //
@@ -259,7 +259,7 @@ namespace Scellecs.Morpeh
             where T5 : unmanaged, IComponent
             where T6 : unmanaged, IComponent;
 
-        public static QueryConfigurer ForEachNative<T1, T2, T3, T4, T5, T6>(this QueryConfigurer queryConfigurer, E<T1, T2, T3, T4, T5, T6> callback)
+        public static QueryBuilder ForEachNative<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, E<T1, T2, T3, T4, T5, T6> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -267,25 +267,25 @@ namespace Scellecs.Morpeh
             where T5 : unmanaged, IComponent
             where T6 : unmanaged, IComponent
         {
-            var filter = queryConfigurer.Filter;
-            if (!queryConfigurer.SkipValidationEnabled)
-                QueryConfigurerHelper.ValidateRequest(queryConfigurer, filter, QueryConfigurerHelper.GetRequestedTypeInfo<T1>(), QueryConfigurerHelper.GetRequestedTypeInfo<T2>(),
-                    QueryConfigurerHelper.GetRequestedTypeInfo<T3>(), QueryConfigurerHelper.GetRequestedTypeInfo<T4>(), QueryConfigurerHelper.GetRequestedTypeInfo<T5>(),
-                    QueryConfigurerHelper.GetRequestedTypeInfo<T6>());
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>(),
+                    QueryBuilderHelper.GetRequestedTypeInfo<T3>(), QueryBuilderHelper.GetRequestedTypeInfo<T4>(), QueryBuilderHelper.GetRequestedTypeInfo<T5>(),
+                    QueryBuilderHelper.GetRequestedTypeInfo<T6>());
 
-            var stashT1 = queryConfigurer.World.GetStash<T1>();
-            var stashT2 = queryConfigurer.World.GetStash<T2>();
-            var stashT3 = queryConfigurer.World.GetStash<T3>();
-            var stashT4 = queryConfigurer.World.GetStash<T4>();
-            var stashT5 = queryConfigurer.World.GetStash<T5>();
-            var stashT6 = queryConfigurer.World.GetStash<T6>();
-            queryConfigurer.System.AddExecutor(() =>
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            var stashT3 = queryBuilder.World.GetStash<T3>();
+            var stashT4 = queryBuilder.World.GetStash<T4>();
+            var stashT5 = queryBuilder.World.GetStash<T5>();
+            var stashT6 = queryBuilder.World.GetStash<T6>();
+            queryBuilder.System.AddExecutor(() =>
             {
                 var nativeFilter = filter.AsNative();
                 callback.Invoke(nativeFilter, stashT1.AsNative(), stashT2.AsNative(), stashT3.AsNative(), stashT4.AsNative(),
                     stashT5.AsNative(), stashT6.AsNative());
             });
-            return queryConfigurer;
+            return queryBuilder;
         }
     }
 }

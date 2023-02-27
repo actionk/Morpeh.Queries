@@ -3,7 +3,7 @@ using Unity.Jobs;
 
 namespace Scellecs.Morpeh
 {
-    public class QueryConfigurerJobHandle
+    public class QueryBuilderJobHandle
     {
         public JobHandle jobHandle;
     }

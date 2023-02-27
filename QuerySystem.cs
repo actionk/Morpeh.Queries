@@ -41,9 +41,9 @@ namespace Scellecs.Morpeh
 #endif
         }
 
-        protected QueryConfigurer CreateQuery()
+        protected QueryBuilder CreateQuery()
         {
-            return new QueryConfigurer(this);
+            return new QueryBuilder(this);
         }
 
         internal void AddExecutor(Action newQueryExecutor)
@@ -52,9 +52,9 @@ namespace Scellecs.Morpeh
         }
 
 #if MORPEH_BURST
-        private readonly FastList<QueryConfigurerJobHandle> m_jobHandles = new();
+        private readonly FastList<QueryBuilderJobHandle> m_jobHandles = new();
 
-        internal void AddJobHandle(QueryConfigurerJobHandle jobHandles)
+        internal void AddJobHandle(QueryBuilderJobHandle jobHandles)
         {
             m_jobHandles.Add(jobHandles);
         }

@@ -26,7 +26,7 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [Scheduling Parallel Jobs](#scheduling-paralell-jobs)
     - [Waiting for another job to finish](#waiting-for-another-job-to-finish)
     - [.ForEachNative](#foreachnative)
-- [Options](#options)
+- [Additions](#additions)
     - [Automatic Validation](#automatic-validation)
     - [OnAwake & OnUpdate](#onawake--onupdate)
 - [License](#license)
@@ -227,7 +227,7 @@ This approach uses `Reflections API` to fill in all the required parameters in t
 
 You should define all the queries inside `Configure` method.
 
-`CreateQuery()` returns an object of type `QueryConfigurer` that has many overloads for filtering that you can apply before describing the `ForEach` lambda. 
+`CreateQuery()` returns an object of type `QueryBuilder` that has many overloads for filtering that you can apply before describing the `ForEach` lambda. 
 
 You can also **combine multiple filtering** calls in a sequence before describing the `ForEach` lambda:
 
@@ -453,7 +453,7 @@ Results: ~2.40 seconds (`1 000 000` entities & `100` iterations)
 
 Supports up to `6` arguments (you can extend it if you want).
 
-## Options
+## Additions
 
 ### Automatic Validation
 
@@ -465,9 +465,34 @@ However, if you're willing to disable the validation for some reason, you can us
 
 ```csharp
 CreateQuery()
-    .WithAll<TestComponent, DamageComponent>
+    .WithAll<TestComponent, DamageComponent>()
     .SkipValidation(true)
     .ForEach(...)
+```
+
+### Globals
+
+If you want to specify that ALL of your queries should only process entities that have component `X` or don't process entities that have component `Y`, you can use globals feature:
+
+```csharp
+QueryBuilderGlobals.With<X>();
+QueryBuilderGlobals.Without<Y>();
+```
+
+Be careful with using globals though - you might have difficult time debugging your systems :)
+
+Make sure you set this before any systems get initialized (once `CreateQuery()` is converted to lambda or job, the filter is not mutable anymore!).
+
+You can also disable globals for specific queries by using `.IgnoreGlobals(true)`:
+
+```csharp
+CreateQuery()
+    .With<TestComponent>()
+    .IgnoreGlobals(true)
+    .ForEach((Entity entity, ref TestComponent testQueryComponent) =>
+    {
+        testQueryComponent.value++;
+    });
 ```
 
 ### OnAwake & OnUpdate
