@@ -16,6 +16,9 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [.Without<T>](#without-t)
     - [.Also](#also)
     - [.ForEach](#foreach)
+- [Jobs & Burst](#jobs--burst)
+    - [.ScheduleJob](#schedulejob)
+    - [.ForEachNative](#foreachnative)
 - [Options](#options)
     - [Automatic Validation](#automatic-validation)
     - [OnAwake & OnUpdate](#onawake--onupdate)
@@ -216,6 +219,91 @@ Supported up to 8 components (you can extend it if you want)
 
 * You can only receive components as **ref**
 * You can't receive Aspects
+
+## Jobs & Burst
+
+You can also use Unity's Jobs system & Burst to run the calculations in background when executing a query instead of running it on the main thread. Use `ScheduleJob` for that.
+
+### .ScheduleJob
+
+```csharp
+[BurstCompile]
+public struct TestJobParallelForReference : IEntityQueryJobParallelFor<TestComponent>
+{
+    public NativeFilter Entities { get; set; }
+    public NativeStash<TestComponent> ComponentT1 { get; set; }
+
+    public void Execute(int index)
+    {
+        var entityId = Entities[index];
+        ref var component = ref ComponentT1.Get(entityId, out var exists);
+        if (exists)
+        {
+            component.value++;
+        }
+    }
+}
+
+public class JobsQueriesTestSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<TestJobParallelForReference, TestComponent>();
+    }
+}
+```
+
+Results: ~2.40 seconds (`1 000 000` entities & `100` iterations)
+
+Supports up to `4` arguments (you can extend it if you want).
+
+### .ForEachNative
+
+```csharp
+[BurstCompile]
+public struct CustomTestJobParallelForReference : IJobParallelFor
+{
+    [ReadOnly]
+    public NativeFilter entities;
+
+    public NativeStash<TestComponent> testComponentStash;
+
+    public void Execute(int index)
+    {
+        var entityId = entities[index];
+        ref var component = ref testComponentStash.Get(entityId, out var exists);
+        if (exists)
+        {
+            component.value++;
+        }
+    }
+}
+
+public class CustomJobsQueriesTestSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        CreateQuery()
+            .With<TestComponent>()
+            .ForEachNative((NativeFilter entities, NativeStash<TestComponent> testComponentStash) =>
+            {
+                var parallelJob = new CustomTestJobParallelForReference
+                {
+                    entities = entities,
+                    testComponentStash = testComponentStash
+                };
+                var parallelJobHandle = parallelJob.Schedule(entities.length, 64);
+                parallelJobHandle.Complete();
+            });
+    }
+}
+```
+
+Results: ~2.40 seconds (`1 000 000` entities & `100` iterations)
+
+Supports up to `6` arguments (you can extend it if you want).
 
 ## Options
 
