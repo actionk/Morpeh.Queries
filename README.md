@@ -1,6 +1,6 @@
 # Morpeh.Queries [![Github license](https://img.shields.io/github/license/codewriter-packages/Morpeh.Events.svg?style=flat-square)](#) [![Unity 2020](https://img.shields.io/badge/Unity-2020+-2296F3.svg?style=flat-square)](#) ![GitHub package.json version](https://img.shields.io/github/package-json/v/actionk/Morpeh.Queries?style=flat-square)
 
-Entity queries plugin (alternative to built-in filters) using lambdas for [Morpeh ECS](https://github.com/scellecs/morpeh).
+Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.com/scellecs/morpeh).
 
 ## Example
 
