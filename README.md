@@ -234,7 +234,7 @@ You can also **combine multiple filtering** calls in a sequence before describin
 
 ```csharp
 CreateQuery()
-    .WithAll<TestComponent, DamageComponent>
+    .WithAll<TestComponent, DamageComponent>()
     .WithNone<Dead, Inactive>()
     .ForEach(...)
 ```
