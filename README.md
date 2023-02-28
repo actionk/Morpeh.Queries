@@ -321,8 +321,6 @@ Supported up to 8 components (you can extend it if you want)
 
 You can also use Unity's Jobs system & Burst to run the calculations in background when executing a query instead of running it on the main thread. Use `ScheduleJob` for that.
 
-Note: you should define MORPEH_BURST in your project in order to be able to use Burst in Morpeh.
-
 ### .ScheduleJob
 
 If you want to use Unity's Jobs with Burst, you can create your job and call `ScheduleJob<YourJobType>` to schedule it. All the fields (`NativeFilter` & `NativeStash<T>`) will be injected automatically!
