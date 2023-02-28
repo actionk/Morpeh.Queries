@@ -8,7 +8,7 @@ namespace Scellecs.Morpeh
 
         public static QueryBuilder Also(this QueryBuilder queryBuilder, Func<Filter,Filter> filterCallback)
         {
-            queryBuilder.filter = filterCallback?.Invoke(queryBuilder.filter);
+            queryBuilder.filter = filterCallback.Invoke(queryBuilder.filter);
             return queryBuilder;
         }
 
