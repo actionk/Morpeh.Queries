@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using Scellecs.Morpeh.Collections;
+using Scellecs.Morpeh.Native;
 using UnityEngine;
 
 namespace Scellecs.Morpeh
 {
-    internal static class QueryBuilderHelper
+    internal static class QueryHelper
     {
+#region Validation
+
         internal struct RequestedTypeInfo
         {
             public Type type;
@@ -45,5 +50,7 @@ namespace Scellecs.Morpeh
             if (hasProblems)
                 throw new Exception($"There were problems when configuring a query for [<b>{queryBuilder.System.GetType().Name}</b>]. Please fix those first");
         }
+
+#endregion
     }
 }

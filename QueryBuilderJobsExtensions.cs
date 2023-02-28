@@ -66,7 +66,7 @@ namespace Scellecs.Morpeh
                         .GetField("info", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
                     var typeInfo = (CommonTypeIdentifier.TypeInfo)infoFieldInfo!.GetValue(null);
 
-                    QueryBuilderHelper.ValidateRequest(queryBuilder, filter, new QueryBuilderHelper.RequestedTypeInfo(requestedComponentType, typeInfo.id));
+                    QueryHelper.ValidateRequest(queryBuilder, filter, new QueryHelper.RequestedTypeInfo(requestedComponentType, typeInfo.id));
 
                     stashFields.Add(field);
                     var stash = queryBuilder.World.GetStash(typeInfo.id);
@@ -106,7 +106,7 @@ namespace Scellecs.Morpeh
         {
             var filter = queryBuilder.Build();
             if (!queryBuilder.skipValidationEnabled)
-                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>());
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>());
 
             var stashT1 = queryBuilder.World.GetStash<T1>();
             queryBuilder.System.AddExecutor(() =>
@@ -131,7 +131,7 @@ namespace Scellecs.Morpeh
         {
             var filter = queryBuilder.Build();
             if (!queryBuilder.skipValidationEnabled)
-                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>());
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>());
 
             var stashT1 = queryBuilder.World.GetStash<T1>();
             var stashT2 = queryBuilder.World.GetStash<T2>();
@@ -159,8 +159,8 @@ namespace Scellecs.Morpeh
         {
             var filter = queryBuilder.Build();
             if (!queryBuilder.skipValidationEnabled)
-                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>(),
-                    QueryBuilderHelper.GetRequestedTypeInfo<T3>());
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
+                    QueryHelper.GetRequestedTypeInfo<T3>());
 
             var stashT1 = queryBuilder.World.GetStash<T1>();
             var stashT2 = queryBuilder.World.GetStash<T2>();
@@ -192,8 +192,8 @@ namespace Scellecs.Morpeh
         {
             var filter = queryBuilder.Build();
             if (!queryBuilder.skipValidationEnabled)
-                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>(),
-                    QueryBuilderHelper.GetRequestedTypeInfo<T3>(), QueryBuilderHelper.GetRequestedTypeInfo<T4>());
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
+                    QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>());
 
             var stashT1 = queryBuilder.World.GetStash<T1>();
             var stashT2 = queryBuilder.World.GetStash<T2>();
@@ -229,8 +229,8 @@ namespace Scellecs.Morpeh
         {
             var filter = queryBuilder.Build();
             if (!queryBuilder.skipValidationEnabled)
-                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>(),
-                    QueryBuilderHelper.GetRequestedTypeInfo<T3>(), QueryBuilderHelper.GetRequestedTypeInfo<T4>(), QueryBuilderHelper.GetRequestedTypeInfo<T5>());
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
+                    QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(), QueryHelper.GetRequestedTypeInfo<T5>());
 
             var stashT1 = queryBuilder.World.GetStash<T1>();
             var stashT2 = queryBuilder.World.GetStash<T2>();
@@ -269,9 +269,9 @@ namespace Scellecs.Morpeh
         {
             var filter = queryBuilder.Build();
             if (!queryBuilder.skipValidationEnabled)
-                QueryBuilderHelper.ValidateRequest(queryBuilder, filter, QueryBuilderHelper.GetRequestedTypeInfo<T1>(), QueryBuilderHelper.GetRequestedTypeInfo<T2>(),
-                    QueryBuilderHelper.GetRequestedTypeInfo<T3>(), QueryBuilderHelper.GetRequestedTypeInfo<T4>(), QueryBuilderHelper.GetRequestedTypeInfo<T5>(),
-                    QueryBuilderHelper.GetRequestedTypeInfo<T6>());
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
+                    QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(), QueryHelper.GetRequestedTypeInfo<T5>(),
+                    QueryHelper.GetRequestedTypeInfo<T6>());
 
             var stashT1 = queryBuilder.World.GetStash<T1>();
             var stashT2 = queryBuilder.World.GetStash<T2>();
