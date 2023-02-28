@@ -6,9 +6,9 @@ namespace Scellecs.Morpeh
     {
 #region Alternatives
 
-        public static QueryBuilder Also(this QueryBuilder queryBuilder, Action<Filter> filterCallback)
+        public static QueryBuilder Also(this QueryBuilder queryBuilder, Func<Filter,Filter> filterCallback)
         {
-            filterCallback?.Invoke(queryBuilder.filter);
+            queryBuilder.filter = filterCallback?.Invoke(queryBuilder.filter);
             return queryBuilder;
         }
 
