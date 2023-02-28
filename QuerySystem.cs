@@ -30,15 +30,29 @@ namespace Scellecs.Morpeh
                 executor.Invoke();
 
 #if MORPEH_BURST
-            if (m_jobHandles.length > 0)
-            {
-                var jobHandles = new NativeArray<JobHandle>(m_jobHandles.length, Allocator.Temp);
-                for (var i = 0; i < m_jobHandles.length; i++)
-                    jobHandles[i] = m_jobHandles.data[i].jobHandle;
-                JobHandle.CombineDependencies(jobHandles).Complete();
-                jobHandles.Dispose();
-            }
+            UpdateJobHandles();
 #endif
+        }
+
+        /// <summary>
+        /// As the world can contain multple jobs, we have to wait until all of them are complete.
+        /// By default, we will be using World's JobHandle to wait for all the jobs. In this case, we combine the existing JobHandle
+        /// from world and JobHandles from this world
+        /// </summary>
+        private void UpdateJobHandles()
+        {
+            if (m_jobHandles.length == 0) 
+                return;
+            
+            var hasWorldJobHandle = !World.JobHandle.IsCompleted;
+            var jobHandlesLength = m_jobHandles.length + (hasWorldJobHandle ? 1 : 0);
+            var jobHandles = new NativeArray<JobHandle>(jobHandlesLength, Allocator.Temp);
+            for (var i = 0; i < m_jobHandles.length; i++)
+                jobHandles[i] = m_jobHandles.data[i].jobHandle;
+            if (hasWorldJobHandle)
+                jobHandles[m_jobHandles.length] = World.JobHandle;
+            World.JobHandle = JobHandle.CombineDependencies(jobHandles);
+            jobHandles.Dispose();
         }
 
         protected QueryBuilder CreateQuery()
