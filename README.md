@@ -22,7 +22,8 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [.Also](#also)
     - [.ForEach](#foreach)
 - [Jobs & Burst](#jobs--burst)
-    - [.ScheduleJob](#schedulejob)
+    - [QuerySystem.ScheduleJob (IJob)](#querysystemschedulejob--ijob-)
+    - [Query.ScheduleJob (IJobParallelFor)](#queryschedulejob--ijobparallelfor-)
     - [Scheduling Parallel Jobs](#scheduling-paralell-jobs)
     - [Waiting for another job to finish](#waiting-for-another-job-to-finish)
     - [.ForEachNative](#foreachnative)
@@ -319,11 +320,41 @@ Supported up to 8 components (you can extend it if you want)
 
 ## Jobs & Burst
 
-You can also use Unity's Jobs system & Burst to run the calculations in background when executing a query instead of running it on the main thread. Use `ScheduleJob` for that.
+To optimize the performance of your application, consider utilizing Unity's Jobs system and Burst technology to execute calculations in the background while running a query instead of executing them on the main thread. You can find examples of using Jobs in this chapter.
 
-### .ScheduleJob
+### QuerySystem.ScheduleJob (IJob)
 
-If you want to use Unity's Jobs with Burst, you can create your job and call `ScheduleJob<YourJobType>` to schedule it. All the fields (`NativeFilter` & `NativeStash<T>`) will be injected automatically!
+If you want to schedule a job which will run once on every update, you can use this:
+
+```csharp
+public class WaitJobSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        this.ScheduleJob<WaitJob>();
+    }
+}
+```
+
+If you need to initialize your job somehow on every update, use preparation delegate:
+```csharp
+public class WaitJobSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        this.ScheduleJob((ref WaitJob job) =>
+        {
+            job.millis = 10;
+        });
+    }
+}
+```
+
+### Query.ScheduleJob (IJobParallelFor)
+
+If you want to schedule a job which will be able to iterate through entities that your query is selecting, use `QueryBuilder.ScheduleJob<YourJobType>` to schedule it. 
+
+All the fields (`NativeFilter` & `NativeStash<T>`) will be injected automatically!
 
 Example
 
