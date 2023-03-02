@@ -53,6 +53,9 @@ namespace Scellecs.Morpeh
             var stashes = new FastList<IStashWrapper>();
 
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ScheduleJob)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             var type = typeof(T);
             foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
             {
@@ -105,6 +108,9 @@ namespace Scellecs.Morpeh
             where T1 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachNative)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+            
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>());
 
@@ -130,6 +136,9 @@ namespace Scellecs.Morpeh
             where T2 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachNative)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>());
 
@@ -158,6 +167,9 @@ namespace Scellecs.Morpeh
             where T3 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachNative)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>());
@@ -191,6 +203,9 @@ namespace Scellecs.Morpeh
             where T4 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachNative)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>());
@@ -228,6 +243,9 @@ namespace Scellecs.Morpeh
             where T5 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachNative)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(), QueryHelper.GetRequestedTypeInfo<T5>());
@@ -268,6 +286,9 @@ namespace Scellecs.Morpeh
             where T6 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachNative)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(), QueryHelper.GetRequestedTypeInfo<T5>(),

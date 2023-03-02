@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection;
-using Scellecs.Morpeh.Collections;
 
 namespace Scellecs.Morpeh
 {
@@ -229,7 +227,7 @@ namespace Scellecs.Morpeh
                 if (filter.IsEmpty())
                     return;
 
-                callback.Invoke(filter);
+                callback.Invoke(filter.filter);
             });
             return queryBuilder;
         }
@@ -242,11 +240,10 @@ namespace Scellecs.Morpeh
         // 0 parameters
         // ------------------------------------------------- //
 
-        public delegate void EP0(Entity entity);
-
-        public static QueryBuilder ForEach(this QueryBuilder queryBuilder, EP0 callback)
+        public static QueryBuilder ForEach(this QueryBuilder queryBuilder, QueryBuilderCallbacks.E callback)
         {
             var filter = queryBuilder.Build();
+
             queryBuilder.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
@@ -261,9 +258,7 @@ namespace Scellecs.Morpeh
         // 1 parameter
         // ------------------------------------------------- //
 
-        public delegate void EP1<T1>(Entity entity, ref T1 component);
-
-        public static QueryBuilder ForEach<T1>(this QueryBuilder queryBuilder, EP1<T1> callback)
+        public static QueryBuilder ForEach<T1>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1> callback)
             where T1 : struct, IComponent
         {
             var filter = queryBuilder.Build();
@@ -282,9 +277,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public delegate void P1<T1>(ref T1 component);
-
-        public static QueryBuilder ForEach<T1>(this QueryBuilder queryBuilder, P1<T1> callback)
+        public static QueryBuilder ForEach<T1>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1> callback)
             where T1 : struct, IComponent
         {
             var filter = queryBuilder.Build();
@@ -303,14 +296,11 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-
         // ------------------------------------------------- //
         // 2 parameters
         // ------------------------------------------------- //
 
-        public delegate void E<T1, T2>(Entity entity, ref T1 component1, ref T2 component2);
-
-        public static QueryBuilder ForEach<T1, T2>(this QueryBuilder queryBuilder, E<T1, T2> callback)
+        public static QueryBuilder ForEach<T1, T2>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
         {
@@ -332,9 +322,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public delegate void P<T1, T2>(ref T1 component1, ref T2 component2);
-
-        public static QueryBuilder ForEach<T1, T2>(this QueryBuilder queryBuilder, P<T1, T2> callback)
+        public static QueryBuilder ForEach<T1, T2>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
         {
@@ -360,9 +348,7 @@ namespace Scellecs.Morpeh
         // 3 parameters
         // ------------------------------------------------- //
 
-        public delegate void E<T1, T2, T3>(Entity entity, ref T1 component1, ref T2 component2, ref T3 component3);
-
-        public static QueryBuilder ForEach<T1, T2, T3>(this QueryBuilder queryBuilder, E<T1, T2, T3> callback)
+        public static QueryBuilder ForEach<T1, T2, T3>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -388,9 +374,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public delegate void P<T1, T2, T3>(ref T1 component1, ref T2 component2, ref T3 component3);
-
-        public static QueryBuilder ForEach<T1, T2, T3>(this QueryBuilder queryBuilder, P<T1, T2, T3> callback)
+        public static QueryBuilder ForEach<T1, T2, T3>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -420,9 +404,7 @@ namespace Scellecs.Morpeh
         // 4 parameters
         // ------------------------------------------------- //
 
-        public delegate void E<T1, T2, T3, T4>(Entity entity, ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component4);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4>(this QueryBuilder queryBuilder, E<T1, T2, T3, T4> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -451,9 +433,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public delegate void P<T1, T2, T3, T4>(ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component4);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4>(this QueryBuilder queryBuilder, P<T1, T2, T3, T4> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -486,9 +466,7 @@ namespace Scellecs.Morpeh
         // 5 parameters
         // ------------------------------------------------- //
 
-        public delegate void E<T1, T2, T3, T4, T5>(Entity entity, ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component4, ref T5 component5);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, E<T1, T2, T3, T4, T5> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4, T5> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -521,9 +499,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public delegate void P<T1, T2, T3, T4, T5>(ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component, ref T5 component5);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, P<T1, T2, T3, T4, T5> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4, T5> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -560,10 +536,7 @@ namespace Scellecs.Morpeh
         // 6 parameters
         // ------------------------------------------------- //
 
-        public delegate void E<T1, T2, T3, T4, T5, T6>(Entity entity, ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component4, ref T5 component5,
-            ref T6 component6);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, E<T1, T2, T3, T4, T5, T6> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4, T5, T6> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -599,9 +572,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public delegate void P<T1, T2, T3, T4, T5, T6>(ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component, ref T5 component5, ref T6 component6);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, P<T1, T2, T3, T4, T5, T6> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4, T5, T6> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -641,10 +612,7 @@ namespace Scellecs.Morpeh
         // 7 parameters
         // ------------------------------------------------- //
 
-        public delegate void E<T1, T2, T3, T4, T5, T6, T7>(Entity entity, ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component4, ref T5 component5,
-            ref T6 component6, ref T7 component7);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6, T7>(this QueryBuilder queryBuilder, E<T1, T2, T3, T4, T5, T6, T7> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6, T7>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4, T5, T6, T7> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -683,10 +651,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public delegate void P<T1, T2, T3, T4, T5, T6, T7>(ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component, ref T5 component5, ref T6 component6,
-            ref T7 component7);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6, T7>(this QueryBuilder queryBuilder, P<T1, T2, T3, T4, T5, T6, T7> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6, T7>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4, T5, T6, T7> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -729,10 +694,7 @@ namespace Scellecs.Morpeh
         // 8 parameters
         // ------------------------------------------------- //
 
-        public delegate void E<T1, T2, T3, T4, T5, T6, T7, T8>(Entity entity, ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component4, ref T5 component5,
-            ref T6 component6, ref T7 component7, ref T8 component8);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6, T7, T8>(this QueryBuilder queryBuilder, E<T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6, T7, T8>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4, T5, T6, T7, T8> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent
@@ -774,10 +736,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public delegate void P<T1, T2, T3, T4, T5, T6, T7, T8>(ref T1 component1, ref T2 component2, ref T3 component3, ref T4 component, ref T5 component5, ref T6 component6,
-            ref T7 component7, ref T8 component8);
-
-        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6, T7, T8>(this QueryBuilder queryBuilder, P<T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        public static QueryBuilder ForEach<T1, T2, T3, T4, T5, T6, T7, T8>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4, T5, T6, T7, T8> callback)
             where T1 : struct, IComponent
             where T2 : struct, IComponent
             where T3 : struct, IComponent

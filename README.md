@@ -13,7 +13,7 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
 - [Comparison & Performance](#comparison--performance)
     - [Before](#before)
     - [After](#after)
-- [Usage](#usage)
+- [Queries](#queries)
     - [Creating a query](#creating-a-query)
     - [.WithAll](#withall)
     - [.WithNone](#withnone)
@@ -21,6 +21,17 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [.Without<T>](#without-t)
     - [.Also](#also)
     - [.ForEach](#foreach)
+    - [.ForEachParallel](#foreachparallel)
+    - [.ForAll](#forall)
+- [Events](#events)
+    - [Getting Started](#getting-started)
+    - [Scheduling Events](#scheduling-events)
+      - [.ScheduleEvent](#scheduleevent)
+      - [.ScheduleEventForEntity](#scheduleeventforentity)
+    - [Receiving Events](#receiving-events)
+      - [.CreateEventListener](#createeventlistener)
+      - [.ForAll](#forall-1)
+      - [.ForEach](#foreach-1)
 - [Jobs & Burst](#jobs--burst)
     - [QuerySystem.ScheduleJob (IJob)](#querysystemschedulejob--ijob-)
     - [Query.ScheduleJob (IJobParallelFor)](#queryschedulejob--ijobparallelfor-)
@@ -32,9 +43,11 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [Globals](#globals)
     - [Automatic Validation](#automatic-validation)
     - [OnAwake & OnUpdate](#onawake--onupdate)
+    - [Custom systems that don't extend QuerySystem](#custom-systems-that-dont-extend-querysystem)
+- [Credits](#credits)
 - [License](#license)
 
-## Examples
+# Examples
 
 ```csharp
 public class ExampleQuerySystem : QuerySystem
@@ -68,9 +81,9 @@ public class CustomSequentialJobQueriesTestSystem : QuerySystem
 }
 ```
 
-## Comparison & Performance
+# Comparison & Performance
 
-### Before
+## Before
 
 Usually, the regular system in Morpeh is implemented this way:
 
@@ -126,7 +139,7 @@ public class NoQueriesUsingStashTestSystem : UpdateSystem
 
 Results: **9.05** seconds (-38%)
 
-### After
+## After
 
 In order to remove the boilerplate for acquiring the components and still have it optimized using Stashes, you can use the Queries from this plugin instead: 
 
@@ -151,7 +164,7 @@ As you can see, we're using a `QuerySystem` abstract class that implements the q
 
 Performance-wise, it's a bit slower than the optimized solution that we've looked previously (because of using lambdas), but still faster that the "default" one and is **much** smaller than both of them.
 
-### After (using Burst)
+## After (using Burst)
 
 In order to optimize it even further, one can use burst jobs. Firstly, let's create a job:
 
@@ -224,9 +237,9 @@ Results: `1.69` seconds (+1%).
 
 This approach uses `Reflections API` to fill in all the required parameters in the job (`NativeFilter` & `NativeStash<T>`), but the code is well optimized and it affects performance very slightly. Supports as many stashes as you want to. 
 
-## Usage
+# Queries
 
-### Creating a query
+## Creating a query
 
 You should define all the queries inside `Configure` method.
 
@@ -241,7 +254,7 @@ CreateQuery()
     .ForEach(...)
 ```
 
-### .WithAll
+## .WithAll
 
 Selects all the entities that have **all** of the specified components.
 
@@ -262,7 +275,7 @@ Filter = Filter.With<TestComponent>().With<DamageComponent>();
 Filter = Filter.With<TestComponent>().With<DamageComponent>().With<PlayerComponent>().With<ViewComponent>();
 ```
 
-### .WithNone
+## .WithNone
 
 Selects all the entities that have **none** of the specified components.
 
@@ -283,15 +296,15 @@ Filter = Filter.Without<Dead>().Without<Inactive>();
 Filter = Filter.Without<Dead>().Without<Inactive>().Without<PlayerComponent>().Without<ViewComponent>();
 ```
 
-### .With<T>
+## .With<T>
 
 Equivalent to Morpeh's `Filter.With<T>`.
 
-### .Without<T>
+## .Without<T>
 
 Equivalent to Morpeh's `Filter.Without<T>`.
 
-### .Also
+## .Also
 
 You can specify your custom filter if you want:
 ```csharp
@@ -301,7 +314,7 @@ CreateQuery()
     .ForEach(...)
 ```
 
-### .ForEach
+## .ForEach
 
 There are multiple supported options for describing a lambda:
 
@@ -319,7 +332,13 @@ Supported up to 8 components (you can extend it if you want)
 * You can only receive components as **ref**
 * You can't receive Aspects
 
-### ForAll
+## .ForEachParallel
+
+Same as `ForEach`, but utilizes `System.Threading.Tasks.Parallel.ForEach` to run the query in multiple threads (same amount as user's CPU cores).
+
+The system will wait until the ForEachParallel finishes. If you want to have async calculations for your system, please use [Jobs & Burst](#jobs--burst)
+
+## .ForAll
 
 Instead of specifying a lambda for each entity that will be processed, you can specify lambda that will be executed once for each update:
 
@@ -328,11 +347,108 @@ Instead of specifying a lambda for each entity that will be processed, you can s
 .ForAll(Filter filter)
 ```
 
-## Jobs & Burst
+# Events
+
+## Getting started
+
+In order to start using Events, you should enable Event's feature for your world:
+
+```csharp
+world = World.Create();
+world.EnableFeature<EventsFeature>();
+```
+
+## Scheduling Events
+
+### .ScheduleEvent
+
+You can schedule an event that will be distributed among all the listener systems during the next frame and will be deleted automatically afterwards. In order to do so, call `this.ScheduleEvent` inside `IQuerySystem` or `World.ScheduleEvent` inside `ISystem`:
+
+```csharp
+World.ScheduleEvent(new TestWorldEvent
+{
+    value = 1
+});
+```
+
+When scheduling the event this way, you're creating one instance of this event that is not connected to any Entity in your world. Basically, this is considered as a World Event.
+
+### .ScheduleEventForEntity
+
+You can schedule an event that will connected to specified Entity and be distributed among all the listener systems during the next frame and will be deleted automatically afterwards. In order to do so, call `this.ScheduleEventForEntity` inside `IQuerySystem` or `World.ScheduleEventForEntity` inside `ISystem`:
+
+```csharp
+this.ScheduleEventForEntity(entity, new TestWorldEvent
+{
+    value = 1
+});
+```
+
+This way, you're creating an instance of this event that is linked to the entity you've specified.
+
+## Receiving Events
+
+### .CreateEventListener
+
+You can subscribe to world events by using `CreateEventListener`:
+
+```csharp
+this.CreateEventListener<TestWorldEvent>()
+```
+
+### .ForAll
+
+If you want to receive list of events that were distributed this frame:
+
+```csharp
+this.CreateEventListener<TestWorldEvent>()
+    .ForAll(events =>
+    {
+        foreach (var eventData in events)
+        {
+            ...
+        }
+    });
+```
+
+### .ForEach
+
+If you want to receive a world event one by one:
+
+```csharp
+this.CreateEventListener<TestWorldEvent>()
+    .ForEach(eventData => { summarizedValue += eventData.value; });
+```
+
+There are also many overrides to this function that allows you to receive the Entity and it's components at the same time:
+
+```csharp
+this.CreateEntityEventListener<TestWorldEvent>()
+    .ForEach((Entity entity, TestWorldEvent testWorldEvent, ref TestComponent testComponent) =>
+    {
+        testComponent.value += 1;
+    });
+
+this.CreateEntityEventListener<TestWorldEvent>()
+    .ForEach((Entity entity, ref TestComponent testComponent) =>
+    {
+        testComponent.value += 1;
+    });
+
+this.CreateEntityEventListener<TestWorldEvent>()
+    .ForEach(entity =>
+    {
+        testComponent.value += 1;
+    });
+```
+
+If you're expecting a component that the Entity that received the event doesn't have -> ForEach won't be triggered for this entity!
+
+# Jobs & Burst
 
 To optimize the performance of your application, consider utilizing Unity's Jobs system and Burst technology to execute calculations in the background while running a query instead of executing them on the main thread. You can find examples of using Jobs in this chapter.
 
-### QuerySystem.ScheduleJob (IJob)
+## QuerySystem.ScheduleJob (IJob)
 
 If you want to schedule a job which will run once on every update, you can use this:
 
@@ -360,7 +476,7 @@ public class WaitJobSystem : QuerySystem
 }
 ```
 
-### Query.ScheduleJob (IJobParallelFor)
+###Query.ScheduleJob (IJobParallelFor)
 
 If you want to schedule a job which will be able to iterate through entities that your query is selecting, use `QueryBuilder.ScheduleJob<YourJobType>` to schedule it. 
 
@@ -403,7 +519,7 @@ Results: ~1.6 seconds (`1 000 000` entities & `100` iterations)
 
 Supports as many NativeStash's as you want.
 
-### Scheduling Parallel Jobs
+## Scheduling Parallel Jobs
 
 You can schedule multiple jobs in one system as well:
 
@@ -455,7 +571,7 @@ public class CustomSequentialJobQueriesTestSystem : QuerySystem
 }
 ```
 
-### Waiting for another job to finish
+## Waiting for another job to finish
 
 You can also force one job to be dependent on another (to only execute when the 1st is finished):
 
@@ -475,7 +591,7 @@ public class CustomSequentialJobQueriesTestSystem : QuerySystem
 }
 ```
 
-### .ForEachNative
+## .ForEachNative
 
 You can also just receive the native filter & stashes if you want to do your custom logic.
 
@@ -523,9 +639,9 @@ Results: ~2.40 seconds (`1 000 000` entities & `100` iterations)
 
 Supports up to `6` arguments (you can extend it if you want).
 
-## Additions
+# Additions
 
-### Automatic Validation
+## Automatic Validation
 
 Be default, the query engine applies checks when you create a query: all the components that you're using in `ForEach` should also be defined in a query using `With` or `WithAll` to guarantee that the components exist on the entities that the resulting `Filter` returns.
 
@@ -540,7 +656,7 @@ CreateQuery()
     .ForEach(...)
 ```
 
-### Globals
+## Globals
 
 If you want to specify that ALL of your queries should only process entities that have component `X` or don't process entities that have component `Y`, you can use globals feature:
 
@@ -565,7 +681,7 @@ CreateQuery()
     });
 ```
 
-### OnAwake & OnUpdate
+## OnAwake & OnUpdate
 
 You can override `OnAwake` & `OnUpdate` methods of `QuerySystem` if you want to:
 
@@ -583,7 +699,14 @@ public override void OnUpdate(float newDeltaTime)
 
 Don't forget to call the base method, otherwise `Configure` and/or queries execution won't happen!
 
+## Custom systems that don't extend QuerySystem
 
-## License
+If you have your own systems that extend `ISystem` and you don't want to inherit `QuerySystem` class, you can just implement interface `IQuerySystem` and implement the logic of executing the lambdas yourself.
+
+# Credits
+
+* Thanks to [codewriter-packages](https://github.com/codewriter-packages) for [Morpeh.Events](https://github.com/codewriter-packages/Morpeh.Events) implementation that was taken as a source for implementing events!
+
+# License
 
 Morpeh.Queries is [MIT licensed](./LICENSE.md).

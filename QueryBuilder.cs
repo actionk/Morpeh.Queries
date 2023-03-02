@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using UnityEngine;
 
 namespace Scellecs.Morpeh
 {
@@ -7,21 +8,21 @@ namespace Scellecs.Morpeh
         private static readonly MethodInfo FILTER_WITH_METHOD_INFO = typeof(FilterExtensions).GetMethod("With");
         private static readonly MethodInfo FILTER_WITHOUT_METHOD_INFO = typeof(FilterExtensions).GetMethod("Without");
 
-        private readonly QuerySystem m_querySystem;
+        private readonly IQuerySystem m_querySystem;
         internal Filter filter;
 
         public World World => m_querySystem.World;
-        public QuerySystem System => m_querySystem;
+        public IQuerySystem System => m_querySystem;
         internal bool skipValidationEnabled;
         internal bool ignoreGlobalsEnabled;
 
-        public QueryBuilder(QuerySystem querySystem)
+        public QueryBuilder(IQuerySystem querySystem)
         {
             m_querySystem = querySystem;
             filter = querySystem.World.Filter;
         }
 
-        public Filter Build()
+        public CompiledQuery Build()
         {
             if (!ignoreGlobalsEnabled)
             {
@@ -38,7 +39,7 @@ namespace Scellecs.Morpeh
                 }
             }
 
-            return filter;
+            return new CompiledQuery(filter);
         }
 
 #region Parameters
