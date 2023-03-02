@@ -6,7 +6,7 @@ namespace Scellecs.Morpeh
     {
         public delegate void PreparationDelegate<T>(ref T jobToPrepare) where T : struct, IJob;
 
-        public static QueryBuilderJobHandle ScheduleJob<T>(this QuerySystem querySystem,
+        public static QueryBuilderJobHandle ScheduleJob<T>(this IQuerySystem querySystem,
             PreparationDelegate<T> preparationDelegate = default,
             QueryBuilderJobHandle waitForJobHandle = default
         ) where T : struct, IJob

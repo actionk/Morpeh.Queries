@@ -33,6 +33,7 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [Globals](#globals)
     - [Automatic Validation](#automatic-validation)
     - [OnAwake & OnUpdate](#onawake--onupdate)
+    - [Custom systems that don't extend QuerySystem](#custom-systems-that-dont-extend-querysystem)
 - [License](#license)
 
 ## Examples
@@ -560,6 +561,9 @@ public override void OnUpdate(float newDeltaTime)
 
 Don't forget to call the base method, otherwise `Configure` and/or queries execution won't happen!
 
+### Custom systems that don't extend QuerySystem
+
+If you have your own systems that extend `ISystem` and you don't want to inherit `QuerySystem` class, you can just implement interface `IQuerySystem` and implement the logic of executing the lambdas yourself.
 
 ## License
 

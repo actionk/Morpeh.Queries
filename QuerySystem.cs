@@ -5,7 +5,7 @@ using Unity.Jobs;
 
 namespace Scellecs.Morpeh
 {
-    public abstract class QuerySystem : ISystem
+    public abstract class QuerySystem : ISystem, IQuerySystem
     {
         private readonly FastList<Action> m_executors = new();
 
@@ -46,7 +46,7 @@ namespace Scellecs.Morpeh
             return new QueryBuilder(this);
         }
 
-        internal void AddExecutor(Action newQueryExecutor)
+        void IQuerySystem.AddExecutor(Action newQueryExecutor)
         {
             m_executors.Add(newQueryExecutor);
         }
@@ -54,7 +54,7 @@ namespace Scellecs.Morpeh
 #if MORPEH_BURST
         private readonly FastList<QueryBuilderJobHandle> m_jobHandles = new();
 
-        internal void AddJobHandle(QueryBuilderJobHandle jobHandles)
+        void IQuerySystem.AddJobHandle(QueryBuilderJobHandle jobHandles)
         {
             m_jobHandles.Add(jobHandles);
         }
