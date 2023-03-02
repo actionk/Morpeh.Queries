@@ -43,16 +43,20 @@ namespace Scellecs.Morpeh
                 .GetValue(null);
         }
 
-        internal static void ValidateRequest(QueryBuilder queryBuilder, Filter filter, params RequestedTypeInfo[] requestedTypeInfosToValidate)
+        internal static void ValidateRequest(QueryBuilder queryBuilder, CompiledQuery compiledQuery, params RequestedTypeInfo[] requestedTypeInfosToValidate)
         {
+            // we can't validate the query if filter is empty
+            if (!compiledQuery.hasFilter)
+                return;
+            
             var hasProblems = false;
             foreach (var requestedTypeInfo in requestedTypeInfosToValidate)
             {
-                if (!filter.includedTypeIds.Contains(requestedTypeInfo.typeId))
+                if (!compiledQuery.filter.includedTypeIds.Contains(requestedTypeInfo.typeId))
                     Debug.LogError(
                         $"You're expecting a component [<b>{requestedTypeInfo.type.Name}</b>] in your query in [<b>{queryBuilder.System.GetType().Name}</b>], but the query is <b>missing</b> this parameter. Please add it to the query first!");
 
-                if (filter.excludedTypeIds.Contains(requestedTypeInfo.typeId))
+                if (compiledQuery.filter.excludedTypeIds.Contains(requestedTypeInfo.typeId))
                     Debug.LogError(
                         $"You're expecting a component [<b>{requestedTypeInfo.type.Name}</b>] in your query in [<b>{queryBuilder.System.GetType().Name}</b>], but the query is <b>deliberately excluded</b> this parameter. Please remove it from the query or from the ForEach lambda!");
             }

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using UnityEngine;
 
 namespace Scellecs.Morpeh
 {
@@ -21,7 +22,7 @@ namespace Scellecs.Morpeh
             filter = querySystem.World.Filter;
         }
 
-        public Filter Build()
+        public CompiledQuery Build()
         {
             if (!ignoreGlobalsEnabled)
             {
@@ -38,7 +39,7 @@ namespace Scellecs.Morpeh
                 }
             }
 
-            return filter;
+            return new CompiledQuery(filter);
         }
 
 #region Parameters

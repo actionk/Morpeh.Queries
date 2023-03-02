@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Scellecs.Morpeh.Native;
 
 namespace Scellecs.Morpeh
@@ -13,6 +14,9 @@ namespace Scellecs.Morpeh
             where T1 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+            
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>());
 
@@ -35,6 +39,9 @@ namespace Scellecs.Morpeh
             where T1 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+            
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>());
 
@@ -63,6 +70,9 @@ namespace Scellecs.Morpeh
             where T2 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>());
 
@@ -90,6 +100,9 @@ namespace Scellecs.Morpeh
             where T2 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>());
 
@@ -121,6 +134,9 @@ namespace Scellecs.Morpeh
             where T3 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>());
@@ -153,6 +169,9 @@ namespace Scellecs.Morpeh
             where T3 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>());
@@ -189,6 +208,9 @@ namespace Scellecs.Morpeh
             where T4 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>());
@@ -225,6 +247,9 @@ namespace Scellecs.Morpeh
             where T4 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>());
@@ -265,6 +290,9 @@ namespace Scellecs.Morpeh
             where T5 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter,
                     QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(),
@@ -306,6 +334,9 @@ namespace Scellecs.Morpeh
             where T5 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(),
@@ -351,6 +382,9 @@ namespace Scellecs.Morpeh
             where T6 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter,
                     QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(),
@@ -396,6 +430,9 @@ namespace Scellecs.Morpeh
             where T6 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(),
@@ -446,6 +483,9 @@ namespace Scellecs.Morpeh
             where T7 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter,
                     QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(),
@@ -495,6 +535,9 @@ namespace Scellecs.Morpeh
             where T7 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(),
                     QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(),
@@ -548,6 +591,9 @@ namespace Scellecs.Morpeh
             where T8 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter,
                     QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(),
@@ -601,6 +647,9 @@ namespace Scellecs.Morpeh
             where T8 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
+            if (!filter.hasFilter)
+                throw new NotImplementedException($"You're not allowed to use [{nameof(ForEachParallel)}] on an empty filter in [{queryBuilder.System.GetType().Name}]");
+
             if (!queryBuilder.skipValidationEnabled)
                 QueryHelper.ValidateRequest(queryBuilder, filter,
                     QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>(),

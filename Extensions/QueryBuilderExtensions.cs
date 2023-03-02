@@ -227,7 +227,7 @@ namespace Scellecs.Morpeh
                 if (filter.IsEmpty())
                     return;
 
-                callback.Invoke(filter);
+                callback.Invoke(filter.filter);
             });
             return queryBuilder;
         }
@@ -243,6 +243,7 @@ namespace Scellecs.Morpeh
         public static QueryBuilder ForEach(this QueryBuilder queryBuilder, QueryBuilderCallbacks.E callback)
         {
             var filter = queryBuilder.Build();
+
             queryBuilder.System.AddExecutor(() =>
             {
                 foreach (var entity in filter)
