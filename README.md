@@ -222,7 +222,7 @@ public class CustomJobQueriesTestSystem : QuerySystem
 
 Results: `1.69` seconds (+1%).
 
-This approach uses `Reflections API` to fill in all the required parameters in the job (`NativeFilter` & `NativeStash<T>`), but the code is well optimized and it affect performance very slightly. Supports as many stashes as you want to. 
+This approach uses `Reflections API` to fill in all the required parameters in the job (`NativeFilter` & `NativeStash<T>`), but the code is well optimized and it affects performance very slightly. Supports as many stashes as you want to. 
 
 ## Usage
 
@@ -318,6 +318,15 @@ Supported up to 8 components (you can extend it if you want)
 
 * You can only receive components as **ref**
 * You can't receive Aspects
+
+### ForAll
+
+Instead of specifying a lambda for each entity that will be processed, you can specify lambda that will be executed once for each update:
+
+```csharp
+.ForAll()
+.ForAll(Filter filter)
+```
 
 ## Jobs & Burst
 
