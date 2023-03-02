@@ -21,6 +21,8 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [.Without<T>](#without-t)
     - [.Also](#also)
     - [.ForEach](#foreach)
+    - [.ForEachParallel](#foreachparallel)
+    - [.ForAll](#forall)
 - [Jobs & Burst](#jobs--burst)
     - [QuerySystem.ScheduleJob (IJob)](#querysystemschedulejob--ijob-)
     - [Query.ScheduleJob (IJobParallelFor)](#queryschedulejob--ijobparallelfor-)
@@ -318,7 +320,13 @@ Supported up to 8 components (you can extend it if you want)
 * You can only receive components as **ref**
 * You can't receive Aspects
 
-### ForAll
+### .ForEachParallel
+
+Same as `ForEach`, but utilizes `System.Threading.Tasks.Parallel.ForEach` to run the query in multiple threads (same amount as user's CPU cores).
+
+The system will wait until the ForEachParallel finishes. If you want to have async calculations for your system, please use [Jobs & Burst](#jobs--burst)
+
+### .ForAll
 
 Instead of specifying a lambda for each entity that will be processed, you can specify lambda that will be executed once for each update:
 
