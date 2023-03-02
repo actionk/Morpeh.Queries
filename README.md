@@ -6,6 +6,9 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
 * Supporting jobs & burst
   * Automatic jobs scheduling
   * Jobs dependencies
+* Events
+  * World Events
+  * Entity Events
 
 ## Table of Contents
 
