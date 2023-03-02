@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using Scellecs.Morpeh.Collections;
 
 namespace Scellecs.Morpeh
 {
@@ -6,9 +8,9 @@ namespace Scellecs.Morpeh
     {
 #region Alternatives
 
-        public static QueryBuilder Also(this QueryBuilder queryBuilder, Func<Filter,Filter> filterCallback)
+        public static QueryBuilder Also(this QueryBuilder queryBuilder, Action<Filter> filterCallback)
         {
-            queryBuilder.filter = filterCallback.Invoke(queryBuilder.filter);
+            filterCallback?.Invoke(queryBuilder.filter);
             return queryBuilder;
         }
 
@@ -201,7 +203,59 @@ namespace Scellecs.Morpeh
 
 #endregion
 
+#region ForAll
+
+        /// <summary>
+        /// Executes a callback once on every update if filter is no empty
+        /// </summary>
+        public static QueryBuilder ForAll(this QueryBuilder queryBuilder, Action callback)
+        {
+            var filter = queryBuilder.Build();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty())
+                    return;
+
+                callback.Invoke();
+            });
+            return queryBuilder;
+        }
+
+        public static QueryBuilder ForAll(this QueryBuilder queryBuilder, Action<Filter> callback)
+        {
+            var filter = queryBuilder.Build();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty())
+                    return;
+
+                callback.Invoke(filter);
+            });
+            return queryBuilder;
+        }
+
+#endregion
+
 #region ForEach
+
+        // ------------------------------------------------- //
+        // 0 parameters
+        // ------------------------------------------------- //
+
+        public delegate void EP0(Entity entity);
+
+        public static QueryBuilder ForEach(this QueryBuilder queryBuilder, EP0 callback)
+        {
+            var filter = queryBuilder.Build();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                foreach (var entity in filter)
+                {
+                    callback.Invoke(entity);
+                }
+            });
+            return queryBuilder;
+        }
 
         // ------------------------------------------------- //
         // 1 parameter

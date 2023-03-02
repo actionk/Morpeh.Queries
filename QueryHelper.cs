@@ -33,6 +33,16 @@ namespace Scellecs.Morpeh
             return new RequestedTypeInfo(typeof(T), TypeIdentifier<T>.info.id);
         }
 
+        private const string TYPE_IDENTIFIER_INFO_FIELD = "info";
+        
+        internal static CommonTypeIdentifier.TypeInfo GetTypeInfoByType(Type type)
+        {
+            return (CommonTypeIdentifier.TypeInfo)typeof(TypeIdentifier<>)
+                .MakeGenericType(type)
+                .GetField(TYPE_IDENTIFIER_INFO_FIELD, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)!
+                .GetValue(null);
+        }
+
         internal static void ValidateRequest(QueryBuilder queryBuilder, Filter filter, params RequestedTypeInfo[] requestedTypeInfosToValidate)
         {
             var hasProblems = false;
