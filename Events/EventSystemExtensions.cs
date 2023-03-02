@@ -12,9 +12,27 @@ namespace Scellecs.Morpeh
         // ------------------------------------------------- //
 
         [PublicAPI]
+        public static void ScheduleEventForEntity<T>(this IQuerySystem querySystem, Entity entity) where T : IWorldEvent, new()
+        {
+            ScheduleEventForEntity(querySystem.World, entity, new T());
+        }
+
+        [PublicAPI]
         public static void ScheduleEventForEntity<T>(this IQuerySystem querySystem, Entity entity, T data) where T : IWorldEvent
         {
             ScheduleEventForEntity(querySystem.World, entity, data);
+        }
+
+        [PublicAPI]
+        public static void ScheduleEventForEntity<T>(this Entity entity) where T : IWorldEvent, new()
+        {
+            ScheduleEventForEntity(entity.world, entity, new T());
+        }
+
+        [PublicAPI]
+        public static void ScheduleEventForEntity<T>(this World world, Entity entity) where T : IWorldEvent, new()
+        {
+            ScheduleEventForEntity(world, entity, new T());
         }
 
         [PublicAPI]
@@ -56,12 +74,7 @@ namespace Scellecs.Morpeh
         public static EventListener<T> CreateEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
         {
             var type = typeof(T);
-            if (!querySystem.World.TryGetFeature(out EventsFeature eventFeature))
-            {
-                Debug.LogError($"You should enable [{nameof(EventsFeature)}] for world [{querySystem.World}] before using [{nameof(CreateEventListener)}]!");
-                return default;
-            }
-
+            var eventFeature = querySystem.World.GetFeature<EventsFeature>();
             if (eventFeature.eventListenersByEventType.TryGetValue(type, out var registeredEvent))
                 return (EventListener<T>)registeredEvent;
 

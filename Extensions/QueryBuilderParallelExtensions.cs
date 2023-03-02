@@ -10,7 +10,7 @@ namespace Scellecs.Morpeh
         // 1 parameter
         // ------------------------------------------------- //
         
-        public static QueryBuilder ForEachParallel<T1>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1> callback)
+        public static QueryBuilder ForEachParallel<T1>(this QueryBuilder queryBuilder, Callbacks.C<T1> callback)
             where T1 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
@@ -35,7 +35,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public static QueryBuilder ForEachParallel<T1>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1> callback)
+        public static QueryBuilder ForEachParallel<T1>(this QueryBuilder queryBuilder, Callbacks.EC<T1> callback)
             where T1 : unmanaged, IComponent
         {
             var filter = queryBuilder.Build();
@@ -65,7 +65,7 @@ namespace Scellecs.Morpeh
         // 2 parameters
         // ------------------------------------------------- //
 
-        public static QueryBuilder ForEachParallel<T1, T2>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2> callback)
+        public static QueryBuilder ForEachParallel<T1, T2>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
         {
@@ -95,7 +95,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public static QueryBuilder ForEachParallel<T1, T2>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2> callback)
+        public static QueryBuilder ForEachParallel<T1, T2>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
         {
@@ -128,7 +128,7 @@ namespace Scellecs.Morpeh
         // 3 parameters
         // ------------------------------------------------- //
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2, T3> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -163,7 +163,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2, T3> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -201,7 +201,7 @@ namespace Scellecs.Morpeh
         // 4 parameters
         // ------------------------------------------------- //
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2, T3, T4> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -240,7 +240,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2, T3, T4> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -282,7 +282,7 @@ namespace Scellecs.Morpeh
         // 5 parameters
         // ------------------------------------------------- //
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4, T5> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2, T3, T4, T5> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -326,7 +326,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4, T5> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2, T3, T4, T5> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -373,7 +373,7 @@ namespace Scellecs.Morpeh
         // 6 parameters
         // ------------------------------------------------- //
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4, T5, T6> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2, T3, T4, T5, T6> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -421,7 +421,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4, T5, T6> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2, T3, T4, T5, T6> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -473,7 +473,7 @@ namespace Scellecs.Morpeh
         // 7 parameters
         // ------------------------------------------------- //
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6, T7>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4, T5, T6, T7> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6, T7>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2, T3, T4, T5, T6, T7> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -525,7 +525,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6, T7>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4, T5, T6, T7> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6, T7>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2, T3, T4, T5, T6, T7> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -580,7 +580,7 @@ namespace Scellecs.Morpeh
         // 8 parameters
         // ------------------------------------------------- //
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6, T7, T8>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.EC<T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6, T7, T8>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2, T3, T4, T5, T6, T7, T8> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent
@@ -636,7 +636,7 @@ namespace Scellecs.Morpeh
             return queryBuilder;
         }
 
-        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6, T7, T8>(this QueryBuilder queryBuilder, QueryBuilderCallbacks.C<T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        public static QueryBuilder ForEachParallel<T1, T2, T3, T4, T5, T6, T7, T8>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2, T3, T4, T5, T6, T7, T8> callback)
             where T1 : unmanaged, IComponent
             where T2 : unmanaged, IComponent
             where T3 : unmanaged, IComponent

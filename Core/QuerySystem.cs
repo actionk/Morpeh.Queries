@@ -12,9 +12,16 @@ namespace Scellecs.Morpeh
         public World World { get; set; }
         protected float deltaTime;
 
+#if UNITY_EDITOR
+        private bool m_isConfiguringFinished;
+#endif
+
         public virtual void OnAwake()
         {
             Configure();
+#if UNITY_EDITOR
+            m_isConfiguringFinished = true;
+#endif
         }
 
         protected abstract void Configure();
@@ -48,6 +55,10 @@ namespace Scellecs.Morpeh
 
         void IQuerySystem.AddExecutor(Action newQueryExecutor)
         {
+#if UNITY_EDITOR
+            if (m_isConfiguringFinished)
+                throw new Exception($"You shouldn't add executors after [{nameof(Configure)}] finished, this leads to bugs!");
+#endif
             m_executors.Add(newQueryExecutor);
         }
 
@@ -56,6 +67,10 @@ namespace Scellecs.Morpeh
 
         void IQuerySystem.AddJobHandle(QueryBuilderJobHandle jobHandles)
         {
+#if UNITY_EDITOR
+            if (m_isConfiguringFinished)
+                throw new Exception($"You shouldn't add executors after [{nameof(Configure)}] finished, this leads to bugs!");
+#endif
             m_jobHandles.Add(jobHandles);
         }
 #endif
