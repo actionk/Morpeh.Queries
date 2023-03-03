@@ -8,9 +8,9 @@ namespace Scellecs.Morpeh
     {
 #region ForAll
 
-        public static EventListener<T> ForAll<T>(this EventListener<T> eventListener, Action<FastList<T>> callback) where T : IWorldEvent
+        public static CompiledEventListener<T> ForAll<T>(this CompiledEventListener<T> eventListener, Action<FastList<T>> callback) where T : IWorldEvent
         {
-            eventListener.Subscribe(callback);
+            eventListener.listener.Subscribe(callback);
             return eventListener;
         }
 
@@ -24,14 +24,14 @@ namespace Scellecs.Morpeh
         
         public delegate void ForEachDelegate<in T>(T eventData) where T : IWorldEvent;
 
-        public static EventListener<T> ForEach<T>(this EventListener<T> eventListener, ForEachDelegate<T> callback) where T : IWorldEvent
+        public static CompiledEventListener<T> ForEach<T>(this CompiledEventListener<T> eventListener, ForEachDelegate<T> callback) where T : IWorldEvent
         {
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
                 
-                foreach(var eventData in eventListener)
+                foreach(var eventData in eventListener.listener)
                     callback.Invoke(eventData);
             });
             return eventListener;
@@ -39,14 +39,14 @@ namespace Scellecs.Morpeh
         
         public delegate void ForEachDelegateWithEntity<in T>(Entity entity, T eventData) where T : IWorldEvent;
 
-        public static EventListener<EventWithEntity<T>> ForEach<T>(this EventListener<EventWithEntity<T>> eventListener, ForEachDelegateWithEntity<T> callback) where T : IWorldEvent
+        public static CompiledEventListener<EventWithEntity<T>> CompiledCompiledEventListener<T>(this CompiledEventListener<EventWithEntity<T>> eventListener, ForEachDelegateWithEntity<T> callback) where T : IWorldEvent
         {
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
                 
-                foreach(var eventData in eventListener)
+                foreach(var eventData in eventListener.listener)
                     callback.Invoke(eventData.entity, eventData.eventData);
             });
             return eventListener;
@@ -54,14 +54,14 @@ namespace Scellecs.Morpeh
         
         public delegate void ForEachDelegateWithEntityWithoutEvent(Entity entity);
 
-        public static EventListener<EventWithEntity<T>> ForEach<T>(this EventListener<EventWithEntity<T>> eventListener, ForEachDelegateWithEntityWithoutEvent callback) where T : IWorldEvent
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T>(this CompiledEventListener<EventWithEntity<T>> eventListener, ForEachDelegateWithEntityWithoutEvent callback) where T : IWorldEvent
         {
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
                 
-                foreach(var eventData in eventListener)
+                foreach(var eventData in eventListener.listener)
                     callback.Invoke(eventData.entity);
             });
             return eventListener;
@@ -71,17 +71,17 @@ namespace Scellecs.Morpeh
         // 1 parameter
         // ------------------------------------------------- //
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, TP1>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, TP1> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, TP1>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, TP1> callback) 
             where T : IWorldEvent
             where TP1: struct, IComponent
         {
             var stash = eventListener.querySystem.World.GetStash<TP1>();
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stash.Get(eventData.entity, out var tp1Exists);
                     if (!tp1Exists)
@@ -93,17 +93,17 @@ namespace Scellecs.Morpeh
             return eventListener;
         }
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, TP1>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EC<TP1> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, TP1>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EC<TP1> callback) 
             where T : IWorldEvent
             where TP1: struct, IComponent
         {
             var stash = eventListener.querySystem.World.GetStash<TP1>();
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stash.Get(eventData.entity, out var tp1Exists);
                     if (!tp1Exists)
@@ -119,7 +119,7 @@ namespace Scellecs.Morpeh
         // 2 parameters
         // ------------------------------------------------- //
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -129,10 +129,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -148,7 +148,7 @@ namespace Scellecs.Morpeh
             return eventListener;
         }
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -158,10 +158,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -181,7 +181,7 @@ namespace Scellecs.Morpeh
         // 3 parameters
         // ------------------------------------------------- //
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -193,10 +193,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -216,7 +216,7 @@ namespace Scellecs.Morpeh
             return eventListener;
         }
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -228,10 +228,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -255,7 +255,7 @@ namespace Scellecs.Morpeh
         // 4 parameters
         // ------------------------------------------------- //
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -269,10 +269,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -296,7 +296,7 @@ namespace Scellecs.Morpeh
             return eventListener;
         }
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -310,10 +310,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -341,7 +341,7 @@ namespace Scellecs.Morpeh
         // 5 parameters
         // ------------------------------------------------- //
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4, T5> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4, T5> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -357,10 +357,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -388,7 +388,7 @@ namespace Scellecs.Morpeh
             return eventListener;
         }
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4, T5> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4, T5> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -404,10 +404,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -439,7 +439,7 @@ namespace Scellecs.Morpeh
         // 6 parameters
         // ------------------------------------------------- //
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4, T5, T6> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4, T5, T6> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -457,10 +457,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -492,7 +492,7 @@ namespace Scellecs.Morpeh
             return eventListener;
         }
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4, T5, T6> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4, T5, T6> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -510,10 +510,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -549,7 +549,7 @@ namespace Scellecs.Morpeh
         // 7 parameters
         // ------------------------------------------------- //
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6, T7>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4, T5, T6, T7> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6, T7>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4, T5, T6, T7> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -569,10 +569,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -608,7 +608,7 @@ namespace Scellecs.Morpeh
             return eventListener;
         }
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6, T7>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4, T5, T6, T7> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6, T7>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4, T5, T6, T7> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -628,10 +628,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -671,7 +671,7 @@ namespace Scellecs.Morpeh
         // 8 parameters
         // ------------------------------------------------- //
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6, T7, T8>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4, T5, T6, T7, T8> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6, T7, T8>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EVC<T, T1, T2, T3, T4, T5, T6, T7, T8> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -693,10 +693,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)
@@ -736,7 +736,7 @@ namespace Scellecs.Morpeh
             return eventListener;
         }
         
-        public static EventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6, T7, T8>(this EventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4, T5, T6, T7, T8> callback) 
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T, T1, T2, T3, T4, T5, T6, T7, T8>(this CompiledEventListener<EventWithEntity<T>> eventListener, Callbacks.EC<T1, T2, T3, T4, T5, T6, T7, T8> callback) 
             where T : IWorldEvent
             where T1: struct, IComponent
             where T2: struct, IComponent
@@ -758,10 +758,10 @@ namespace Scellecs.Morpeh
             
             eventListener.querySystem.AddExecutor(() =>
             {
-                if (!eventListener.HasPublishedEventsThisFrame)
+                if (!eventListener.listener.HasPublishedEventsThisFrame)
                     return;
 
-                foreach (var eventData in eventListener)
+                foreach (var eventData in eventListener.listener)
                 {
                     ref var component1 = ref stashT1.Get(eventData.entity, out var exists1);
                     if (!exists1)

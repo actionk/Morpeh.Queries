@@ -71,20 +71,25 @@ namespace Scellecs.Morpeh
         // ------------------------------------------------- //
 
         [PublicAPI]
-        public static EventListener<T> CreateEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
+        public static CompiledEventListener<T> CreateEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
         {
             var type = typeof(T);
-            var eventFeature = querySystem.World.GetFeature<EventsFeature>();
-            if (eventFeature.eventListenersByEventType.TryGetValue(type, out var registeredEvent))
-                return (EventListener<T>)registeredEvent;
+            if (!querySystem.World.TryGetFeature(out EventsFeature eventFeature))
+            {
+                Debug.LogError($"You should enable [{nameof(EventsFeature)}] for world [{querySystem.World}] before using [{nameof(CreateEventListener)}]!");
+                return default;
+            }
 
-            registeredEvent = new EventListener<T>(querySystem, eventFeature);
+            if (eventFeature.eventListenersByEventType.TryGetValue(type, out var registeredEvent))
+                return new CompiledEventListener<T>(querySystem, (EventListener<T>)registeredEvent);
+
+            registeredEvent = new EventListener<T>(eventFeature);
             eventFeature.eventListenersByEventType.Add(type, registeredEvent);
-            return (EventListener<T>)registeredEvent;
+            return new CompiledEventListener<T>(querySystem, (EventListener<T>)registeredEvent);
         }
 
         [PublicAPI]
-        public static EventListener<EventWithEntity<T>> CreateEntityEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
+        public static CompiledEventListener<EventWithEntity<T>> CreateEntityEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
         {
             return CreateEventListener<EventWithEntity<T>>(querySystem);
         }

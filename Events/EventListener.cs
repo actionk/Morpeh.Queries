@@ -28,7 +28,7 @@ namespace Scellecs.Morpeh
         public bool HasPublishedEventsThisFrame { get; private set; }
         private bool IsUpdateScheduled => HasPublishedEventsThisFrame || hasScheduledEventsForNextFrame;
 
-        public EventListener(IQuerySystem querySystem, EventsFeature feature) : base(querySystem, feature)
+        public EventListener(EventsFeature feature) : base(feature)
         {
         }
 
@@ -133,11 +133,9 @@ namespace Scellecs.Morpeh
     public abstract class EventListener
     {
         internal EventsFeature feature;
-        internal IQuerySystem querySystem;
 
-        protected EventListener(IQuerySystem querySystem, EventsFeature feature)
+        protected EventListener(EventsFeature feature)
         {
-            this.querySystem = querySystem;
             this.feature = feature;
         }
 
