@@ -12,9 +12,27 @@ namespace Scellecs.Morpeh
         // ------------------------------------------------- //
 
         [PublicAPI]
+        public static void ScheduleEventForEntity<T>(this IQuerySystem querySystem, Entity entity) where T : IWorldEvent, new()
+        {
+            ScheduleEventForEntity(querySystem.World, entity, new T());
+        }
+
+        [PublicAPI]
         public static void ScheduleEventForEntity<T>(this IQuerySystem querySystem, Entity entity, T data) where T : IWorldEvent
         {
             ScheduleEventForEntity(querySystem.World, entity, data);
+        }
+
+        [PublicAPI]
+        public static void ScheduleEventForEntity<T>(this Entity entity) where T : IWorldEvent, new()
+        {
+            ScheduleEventForEntity(entity.world, entity, new T());
+        }
+
+        [PublicAPI]
+        public static void ScheduleEventForEntity<T>(this World world, Entity entity) where T : IWorldEvent, new()
+        {
+            ScheduleEventForEntity(world, entity, new T());
         }
 
         [PublicAPI]
@@ -53,7 +71,7 @@ namespace Scellecs.Morpeh
         // ------------------------------------------------- //
 
         [PublicAPI]
-        public static EventListener<T> CreateEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
+        public static CompiledEventListener<T> CreateEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
         {
             var type = typeof(T);
             if (!querySystem.World.TryGetFeature(out EventsFeature eventFeature))
@@ -63,15 +81,15 @@ namespace Scellecs.Morpeh
             }
 
             if (eventFeature.eventListenersByEventType.TryGetValue(type, out var registeredEvent))
-                return (EventListener<T>)registeredEvent;
+                return new CompiledEventListener<T>(querySystem, (EventListener<T>)registeredEvent);
 
-            registeredEvent = new EventListener<T>(querySystem, eventFeature);
+            registeredEvent = new EventListener<T>(eventFeature);
             eventFeature.eventListenersByEventType.Add(type, registeredEvent);
-            return (EventListener<T>)registeredEvent;
+            return new CompiledEventListener<T>(querySystem, (EventListener<T>)registeredEvent);
         }
 
         [PublicAPI]
-        public static EventListener<EventWithEntity<T>> CreateEntityEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
+        public static CompiledEventListener<EventWithEntity<T>> CreateEntityEventListener<T>(this IQuerySystem querySystem) where T : IWorldEvent
         {
             return CreateEventListener<EventWithEntity<T>>(querySystem);
         }

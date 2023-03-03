@@ -16,12 +16,12 @@ namespace Plugins.morpeh_plugins.Morpeh.WorldFeatures
 
         private static readonly IntHashMap<WorldFeaturesSystem> WORLD_TO_FEATURE_SYSTEM_MAP = new();
         
-        public static void EnableFeature<T>(this World world) where T : class, IWorldFeature, new()
+        public static T EnableFeature<T>(this World world) where T : class, IWorldFeature, new()
         {
-            EnableFeature(world, new T());
+            return EnableFeature(world, new T());
         }
 
-        public static void EnableFeature<T>(this World world, T feature) where T : class, IWorldFeature
+        public static T EnableFeature<T>(this World world, T feature) where T : class, IWorldFeature
         {
             if (!WORLD_TO_FEATURE_SYSTEM_MAP.TryGetValue(world.identifier, out WorldFeaturesSystem worldFeaturesSystem))
             {
@@ -33,6 +33,18 @@ namespace Plugins.morpeh_plugins.Morpeh.WorldFeatures
             }
 
             worldFeaturesSystem!.AddFeature(feature);
+            return feature;
+        }
+
+        public static T GetFeature<T>(this World world) where T : class, IWorldFeature
+        {
+            if (!WORLD_TO_FEATURE_SYSTEM_MAP.TryGetValue(world.identifier, out WorldFeaturesSystem worldFeaturesSystem) || !worldFeaturesSystem!.TryGetFeature(out T feature)) 
+            {
+                Debug.LogError($"You should enable [{nameof(T)}] for world [{world}] before using [{nameof(GetFeature)}]!");
+                return default;
+            }
+
+            return feature;
         }
         
         public static bool TryGetFeature<T>(this World world, out T feature) where T : class, IWorldFeature
