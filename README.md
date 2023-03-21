@@ -13,6 +13,7 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
 ## Table of Contents
 
 - [Examples](#examples)
+- [Install](#install)
 - [Comparison & Performance](#comparison--performance)
     - [Before](#before)
     - [After](#after)
@@ -83,6 +84,14 @@ public class CustomSequentialJobQueriesTestSystem : QuerySystem
     }
 }
 ```
+
+# Install
+
+You can install the package using Package Manager. Go to `Window -> Package Manager`, click `+`, select `Add package from git URL...`, paste:
+
+`https://github.com/actionk/Morpeh.Queries.git`
+
+Installation is done!
 
 # Comparison & Performance
 
