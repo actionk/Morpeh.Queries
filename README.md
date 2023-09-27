@@ -39,6 +39,7 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [QuerySystem.ScheduleJob (IJob)](#querysystemschedulejob--ijob-)
     - [Query.ScheduleJob (IJobParallelFor)](#queryschedulejob--ijobparallelfor-)
     - [Scheduling Parallel Jobs](#scheduling-paralell-jobs)
+    - [Waiting for previous or inner jobs to finish](#waiting-for-previous-or-inner-jobs-to-finish)
     - [Waiting for another job to finish](#waiting-for-another-job-to-finish)
     - [.ForEachNative](#foreachnative)
 - [Additions](#additions)
@@ -523,7 +524,7 @@ Supports as many NativeStash's as you want.
 
 ## Scheduling Parallel Jobs
 
-You can schedule multiple jobs in one systems as well:
+You can schedule multiple jobs in one system as well:
 
 ```csharp
 public class CustomParallelJobQueriesTestSystem : QuerySystem
@@ -541,7 +542,37 @@ public class CustomParallelJobQueriesTestSystem : QuerySystem
 }
 ```
 
-This way they will be executed in parallel and the system will wait for both jobs to finish.
+They will be executed in parallel.
+
+### Waiting for previous or inner jobs to finish
+
+By default, `QuerySystem` won't wait until all the previous and/or inner jobs are completed, but will delegate this logic to the `World.JobHandle` instead. In this case, the world will wait for all the jobs in all the systems to be finished. 
+
+However, you can change this behaviour by using `WaitUntilInnerJobsCompleted` and/or `WaitUntilPreviousJobsCompleted`:
+
+```csharp
+public class CustomSequentialJobQueriesTestSystem : QuerySystem
+{
+    protected override void Configure()
+    {
+        // let's wait until all the previous jobs (from previous systems) are finished
+        WaitUntilPreviousJobsCompleted();
+        
+        // let's schedule first job
+        CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<CustomTestJobParallel>();
+        
+        // scheduling another job that will be run in parallel with the 1st
+        CreateQuery()
+            .With<TestComponent>()
+            .ScheduleJob<AnotherParallelCustomTestJobParallel>();
+        
+        // let's wait until both jobs that we created to be finished before proceeding to the next system
+        WaitUntilInnerJobsCompleted();
+    }
+}
+```
 
 ## Waiting for another job to finish
 
