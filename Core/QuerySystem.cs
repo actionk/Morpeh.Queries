@@ -92,6 +92,8 @@ namespace Scellecs.Morpeh
             return new QueryBuilder(this);
         }
 
+        public virtual bool IsUpdatedEveryFrame => true;
+
         void IQuerySystem.AddExecutor(Action newQueryExecutor)
         {
 #if UNITY_EDITOR

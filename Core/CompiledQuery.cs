@@ -4,47 +4,70 @@ using Scellecs.Morpeh.Native;
 
 namespace Scellecs.Morpeh
 {
-    public readonly struct CompiledQuery : IEnumerable<Entity>
+    public readonly struct CompiledQuery
     {
         public readonly Filter filter;
         public readonly bool hasFilter;
-        public World world => filter.world;
+        public World World => filter.world;
 
-        private struct WorldEntitiesEnumerator : IEnumerator<Entity>
+        public struct WorldEntitiesEnumerator : IEnumerator<Entity>
         {
-            public readonly Entity[] entities;
-            private int index;
+            private readonly Entity[] m_entities;
+            private int m_index;
+            private bool m_useEntityEnumerator;
+            private Filter.EntityEnumerator m_entityEnumerator;
 
             public WorldEntitiesEnumerator(Entity[] worldEntities)
             {
-                entities = worldEntities;
-                index = 0;
+                m_entities = worldEntities;
+                m_index = 0;
+                m_useEntityEnumerator = false;
+                m_entityEnumerator = default;
+            }
+
+            public WorldEntitiesEnumerator(Filter.EntityEnumerator entityEnumerator)
+            {
+                m_entities = default;
+                m_index = 0;
+                m_useEntityEnumerator = true;
+                m_entityEnumerator = entityEnumerator;
             }
 
             public bool MoveNext()
             {
-                index++;
-                return index < entities.Length - 1 && entities[index] != null;
+                if (m_useEntityEnumerator)
+                    return m_entityEnumerator.MoveNext();
+
+                m_index++;
+                return m_index < m_entities.Length - 1 && m_entities[m_index] != null;
             }
 
             public void Reset()
             {
-                index = 0;
+                if (m_useEntityEnumerator)
+                {
+                    ((IEnumerator)m_entityEnumerator).Reset();
+                    return;
+                }
+
+                m_index = 0;
             }
 
-            public Entity Current => entities[index];
+            public Entity Current => m_useEntityEnumerator ? m_entityEnumerator.Current : m_entities[m_index];
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current => m_useEntityEnumerator ? m_entityEnumerator.Current : Current;
 
             public void Dispose()
             {
+                if (m_useEntityEnumerator)
+                    m_entityEnumerator.Dispose();
             }
         }
 
         public CompiledQuery(Filter filter)
         {
             this.filter = filter;
-            hasFilter = filter.typeID != -1;
+            hasFilter = filter.excludedTypeIds.length > 0 || filter.includedTypeIds.length > 0;
         }
 
         public bool IsEmpty()
@@ -55,17 +78,12 @@ namespace Scellecs.Morpeh
             return filter.IsEmpty();
         }
 
-        public IEnumerator<Entity> GetEnumerator()
+        public WorldEntitiesEnumerator GetEnumerator()
         {
             if (!hasFilter)
                 return new WorldEntitiesEnumerator(filter.world.entities);
 
-            return filter.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            return new WorldEntitiesEnumerator(filter.GetEnumerator());
         }
 
         public NativeFilter AsNative()

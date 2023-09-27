@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using UnityEngine;
 
 namespace Scellecs.Morpeh
 {
@@ -9,7 +8,7 @@ namespace Scellecs.Morpeh
         private static readonly MethodInfo FILTER_WITHOUT_METHOD_INFO = typeof(FilterExtensions).GetMethod("Without");
 
         private readonly IQuerySystem m_querySystem;
-        internal Filter filter;
+        internal FilterBuilder filterBuilder;
 
         public World World => m_querySystem.World;
         public IQuerySystem System => m_querySystem;
@@ -19,27 +18,27 @@ namespace Scellecs.Morpeh
         public QueryBuilder(IQuerySystem querySystem)
         {
             m_querySystem = querySystem;
-            filter = querySystem.World.Filter;
+            filterBuilder = querySystem.World.Filter;
         }
 
         public CompiledQuery Build()
         {
             if (!ignoreGlobalsEnabled)
             {
-                if (QueryBuilderGlobals.TYPES_TO_REQUIRE.length > 0)
+                if (QueryBuilderGlobals.TYPES_TO_REQUIRE.Count > 0)
                 {
-                    for (var i = 0; i < QueryBuilderGlobals.TYPES_TO_REQUIRE.length; i++)
-                        filter = (Filter)FILTER_WITH_METHOD_INFO.MakeGenericMethod(QueryBuilderGlobals.TYPES_TO_REQUIRE.data[i]).Invoke(filter, new object[] { filter });
+                    for (var i = 0; i < QueryBuilderGlobals.TYPES_TO_REQUIRE.Count; i++)
+                        filterBuilder = (FilterBuilder)FILTER_WITH_METHOD_INFO.MakeGenericMethod(QueryBuilderGlobals.TYPES_TO_REQUIRE[i]).Invoke(filterBuilder, new object[] { filterBuilder });
                 }
 
-                if (QueryBuilderGlobals.TYPES_TO_IGNORE.length > 0)
+                if (QueryBuilderGlobals.TYPES_TO_IGNORE.Count > 0)
                 {
-                    for (var i = 0; i < QueryBuilderGlobals.TYPES_TO_IGNORE.length; i++)
-                        filter = (Filter)FILTER_WITHOUT_METHOD_INFO.MakeGenericMethod(QueryBuilderGlobals.TYPES_TO_IGNORE.data[i]).Invoke(filter, new object[] { filter });
+                    for (var i = 0; i < QueryBuilderGlobals.TYPES_TO_IGNORE.Count; i++)
+                        filterBuilder = (FilterBuilder)FILTER_WITHOUT_METHOD_INFO.MakeGenericMethod(QueryBuilderGlobals.TYPES_TO_IGNORE[i]).Invoke(filterBuilder, new object[] { filterBuilder });
                 }
             }
 
-            return new CompiledQuery(filter);
+            return new CompiledQuery(filterBuilder.Build());
         }
 
 #region Parameters

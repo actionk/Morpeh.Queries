@@ -53,7 +53,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     callback.Invoke(entity, ref componentT1);
                 });
@@ -86,7 +86,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     ref var componentT2 = ref nativeStashT2.Get(entityId);
                     callback.Invoke(entity, ref componentT1, ref componentT2);
@@ -153,7 +153,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     ref var componentT2 = ref nativeStashT2.Get(entityId);
                     ref var componentT3 = ref nativeStashT3.Get(entityId);
@@ -229,7 +229,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     ref var componentT2 = ref nativeStashT2.Get(entityId);
                     ref var componentT3 = ref nativeStashT3.Get(entityId);
@@ -314,7 +314,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     ref var componentT2 = ref nativeStashT2.Get(entityId);
                     ref var componentT3 = ref nativeStashT3.Get(entityId);
@@ -408,7 +408,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     ref var componentT2 = ref nativeStashT2.Get(entityId);
                     ref var componentT3 = ref nativeStashT3.Get(entityId);
@@ -456,7 +456,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     ref var componentT2 = ref nativeStashT2.Get(entityId);
                     ref var componentT3 = ref nativeStashT3.Get(entityId);
@@ -511,7 +511,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     ref var componentT2 = ref nativeStashT2.Get(entityId);
                     ref var componentT3 = ref nativeStashT3.Get(entityId);
@@ -621,7 +621,7 @@ namespace Scellecs.Morpeh
                 Parallel.For(0, nativeFilter.length, index =>
                 {
                     var entityId = nativeFilter[index];
-                    var entity = filter.world.GetEntity(entityId.id);
+                    var entity = filter.World.GetEntity(entityId.id);
                     ref var componentT1 = ref nativeStashT1.Get(entityId);
                     ref var componentT2 = ref nativeStashT2.Get(entityId);
                     ref var componentT3 = ref nativeStashT3.Get(entityId);

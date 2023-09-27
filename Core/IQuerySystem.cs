@@ -5,6 +5,7 @@ namespace Scellecs.Morpeh
     public interface IQuerySystem
     {
         public World World { get; set; }
+        public bool IsUpdatedEveryFrame { get; }
         
         internal void AddExecutor(Action newQueryExecutor);
         

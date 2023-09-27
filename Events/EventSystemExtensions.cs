@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Plugins.morpeh_plugins.Morpeh.WorldFeatures;
 using Scellecs.Morpeh.Events;
 using UnityEngine;
@@ -14,12 +15,18 @@ namespace Scellecs.Morpeh
         [PublicAPI]
         public static void ScheduleEventForEntity<T>(this IQuerySystem querySystem, Entity entity) where T : IWorldEvent, new()
         {
+            if (!querySystem.IsUpdatedEveryFrame)
+                throw new Exception($"You should never subscribe to events in a QuerySystem [{querySystem.GetType().Name}] that doesn't update each frame, this will lead to losing events!");
+
             ScheduleEventForEntity(querySystem.World, entity, new T());
         }
 
         [PublicAPI]
         public static void ScheduleEventForEntity<T>(this IQuerySystem querySystem, Entity entity, T data) where T : IWorldEvent
         {
+            if (!querySystem.IsUpdatedEveryFrame)
+                throw new Exception($"You should never subscribe to events in a QuerySystem [{querySystem.GetType().Name}] that doesn't update each frame, this will lead to losing events!");
+
             ScheduleEventForEntity(querySystem.World, entity, data);
         }
 
@@ -41,7 +48,7 @@ namespace Scellecs.Morpeh
             // if there are no listeners - it doesn't make sense to schedule an event
             if (!world.TryGetEventListener(out EventListener<EventWithEntity<T>> eventListener))
                 return;
-            
+
             var eventData = new EventWithEntity<T>
             {
                 entity = entity,
@@ -62,7 +69,7 @@ namespace Scellecs.Morpeh
             // if there are no listeners - it doesn't make sense to schedule an event
             if (!world.TryGetEventListener(out EventListener<T> eventListener))
                 return;
-            
+
             eventListener.ScheduleEventForNextFrame(data);
         }
 
