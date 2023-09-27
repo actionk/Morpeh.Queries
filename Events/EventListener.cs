@@ -17,7 +17,7 @@ namespace Scellecs.Morpeh
     [Il2CppSetOption(Option.NullChecks, false)]
     [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     [Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    public class EventListener<T> : EventListener, IEnumerable<T> where T : IWorldEvent
+    public class EventListener<T> : EventListener where T : IWorldEvent
     {
         private FastList<T> scheduledEventsForNextFrame = new();
         private FastList<T> publishedEventsForThisFrame = new();
@@ -43,12 +43,7 @@ namespace Scellecs.Morpeh
             hasScheduledEventsForNextFrame = true;
         }
 
-        public IEnumerator<T> GetEnumerator()
-        {
-            return publishedEventsForThisFrame.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
+        public FastList<T>.Enumerator GetEnumerator()
         {
             return publishedEventsForThisFrame.GetEnumerator();
         }

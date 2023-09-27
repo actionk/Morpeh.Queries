@@ -11,21 +11,21 @@ namespace Scellecs.Morpeh
         
 #region Alternatives
 
-        public static QueryBuilder Also(this QueryBuilder queryBuilder, Action<Filter> filterCallback)
+        public static QueryBuilder Also(this QueryBuilder queryBuilder, Action<FilterBuilder> filterCallback)
         {
-            filterCallback?.Invoke(queryBuilder.filter);
+            filterCallback?.Invoke(queryBuilder.filterBuilder);
             return queryBuilder;
         }
 
         public static QueryBuilder With<T>(this QueryBuilder queryBuilder) where T : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T>();
             return queryBuilder;
         }
 
         public static QueryBuilder Without<T>(this QueryBuilder queryBuilder) where T : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T>();
             return queryBuilder;
         }
 
@@ -36,7 +36,7 @@ namespace Scellecs.Morpeh
         public static QueryBuilder WithAll<T1>(this QueryBuilder queryBuilder)
             where T1 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T1>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T1>();
             return queryBuilder;
         }
 
@@ -44,7 +44,7 @@ namespace Scellecs.Morpeh
             where T1 : struct, IComponent
             where T2 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T1>().With<T2>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T1>().With<T2>();
             return queryBuilder;
         }
 
@@ -53,7 +53,7 @@ namespace Scellecs.Morpeh
             where T2 : struct, IComponent
             where T3 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T1>().With<T2>().With<T3>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T1>().With<T2>().With<T3>();
             return queryBuilder;
         }
 
@@ -63,7 +63,7 @@ namespace Scellecs.Morpeh
             where T3 : struct, IComponent
             where T4 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T1>().With<T2>().With<T3>().With<T4>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T1>().With<T2>().With<T3>().With<T4>();
             return queryBuilder;
         }
 
@@ -74,7 +74,7 @@ namespace Scellecs.Morpeh
             where T4 : struct, IComponent
             where T5 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T1>().With<T2>().With<T3>().With<T4>().With<T5>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T1>().With<T2>().With<T3>().With<T4>().With<T5>();
             return queryBuilder;
         }
 
@@ -86,7 +86,7 @@ namespace Scellecs.Morpeh
             where T5 : struct, IComponent
             where T6 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T1>().With<T2>().With<T3>().With<T4>().With<T5>().With<T6>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T1>().With<T2>().With<T3>().With<T4>().With<T5>().With<T6>();
             return queryBuilder;
         }
 
@@ -99,7 +99,7 @@ namespace Scellecs.Morpeh
             where T6 : struct, IComponent
             where T7 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T1>().With<T2>().With<T3>().With<T4>().With<T5>().With<T6>().With<T7>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T1>().With<T2>().With<T3>().With<T4>().With<T5>().With<T6>().With<T7>();
             return queryBuilder;
         }
 
@@ -113,7 +113,7 @@ namespace Scellecs.Morpeh
             where T7 : struct, IComponent
             where T8 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.With<T1>().With<T2>().With<T3>().With<T4>().With<T5>().With<T6>().With<T7>().With<T8>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.With<T1>().With<T2>().With<T3>().With<T4>().With<T5>().With<T6>().With<T7>().With<T8>();
             return queryBuilder;
         }
 
@@ -123,7 +123,7 @@ namespace Scellecs.Morpeh
 
         public static QueryBuilder WithNone<T1>(this QueryBuilder queryBuilder) where T1 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T1>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T1>();
             return queryBuilder;
         }
 
@@ -131,7 +131,7 @@ namespace Scellecs.Morpeh
             where T1 : struct, IComponent
             where T2 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T1>().Without<T2>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T1>().Without<T2>();
             return queryBuilder;
         }
 
@@ -140,7 +140,7 @@ namespace Scellecs.Morpeh
             where T2 : struct, IComponent
             where T3 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T1>().Without<T2>().Without<T3>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T1>().Without<T2>().Without<T3>();
             return queryBuilder;
         }
 
@@ -150,7 +150,7 @@ namespace Scellecs.Morpeh
             where T3 : struct, IComponent
             where T4 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T1>().Without<T2>().Without<T3>().Without<T4>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T1>().Without<T2>().Without<T3>().Without<T4>();
             return queryBuilder;
         }
 
@@ -161,7 +161,7 @@ namespace Scellecs.Morpeh
             where T4 : struct, IComponent
             where T5 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T1>().Without<T2>().Without<T3>().Without<T4>().Without<T5>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T1>().Without<T2>().Without<T3>().Without<T4>().Without<T5>();
             return queryBuilder;
         }
 
@@ -173,7 +173,7 @@ namespace Scellecs.Morpeh
             where T5 : struct, IComponent
             where T6 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T1>().Without<T2>().Without<T3>().Without<T4>().Without<T5>().Without<T6>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T1>().Without<T2>().Without<T3>().Without<T4>().Without<T5>().Without<T6>();
             return queryBuilder;
         }
 
@@ -186,7 +186,7 @@ namespace Scellecs.Morpeh
             where T6 : struct, IComponent
             where T7 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T1>().Without<T2>().Without<T3>().Without<T4>().Without<T5>().Without<T6>().Without<T7>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T1>().Without<T2>().Without<T3>().Without<T4>().Without<T5>().Without<T6>().Without<T7>();
             return queryBuilder;
         }
 
@@ -200,7 +200,7 @@ namespace Scellecs.Morpeh
             where T7 : struct, IComponent
             where T8 : struct, IComponent
         {
-            queryBuilder.filter = queryBuilder.filter.Without<T1>().Without<T2>().Without<T3>().Without<T4>().Without<T5>().Without<T6>().Without<T7>().Without<T8>();
+            queryBuilder.filterBuilder = queryBuilder.filterBuilder.Without<T1>().Without<T2>().Without<T3>().Without<T4>().Without<T5>().Without<T6>().Without<T7>().Without<T8>();
             return queryBuilder;
         }
 

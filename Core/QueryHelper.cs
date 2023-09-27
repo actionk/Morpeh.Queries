@@ -14,14 +14,14 @@ namespace Scellecs.Morpeh
         internal struct RequestedTypeInfo
         {
             public Type type;
-            public int typeId;
+            public long typeId;
 
             public RequestedTypeInfo(Type type) : this()
             {
                 this.type = type;
             }
 
-            public RequestedTypeInfo(Type type, int typeId)
+            public RequestedTypeInfo(Type type, long typeId)
             {
                 this.type = type;
                 this.typeId = typeId;
@@ -52,11 +52,11 @@ namespace Scellecs.Morpeh
             var hasProblems = false;
             foreach (var requestedTypeInfo in requestedTypeInfosToValidate)
             {
-                if (!compiledQuery.filter.includedTypeIds.Contains(requestedTypeInfo.typeId))
+                if (!compiledQuery.filter.includedTypeIds.data.Contains(requestedTypeInfo.typeId))
                     Debug.LogError(
                         $"You're expecting a component [<b>{requestedTypeInfo.type.Name}</b>] in your query in [<b>{queryBuilder.System.GetType().Name}</b>], but the query is <b>missing</b> this parameter. Please add it to the query first!");
 
-                if (compiledQuery.filter.excludedTypeIds.Contains(requestedTypeInfo.typeId))
+                if (compiledQuery.filter.excludedTypeIds.data.Contains(requestedTypeInfo.typeId))
                     Debug.LogError(
                         $"You're expecting a component [<b>{requestedTypeInfo.type.Name}</b>] in your query in [<b>{queryBuilder.System.GetType().Name}</b>], but the query is <b>deliberately excluded</b> this parameter. Please remove it from the query or from the ForEach lambda!");
             }
