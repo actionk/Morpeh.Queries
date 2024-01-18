@@ -3,7 +3,7 @@
     "displayName": "Morpeh.Queries",
     "description": "Queries for Morpeh ECS",
     "version": "2023.1",
-    "unity": "2021.3",
+    "unity": "2021.3.0",
     "license": "MIT",
     "author": "ActioNik (https://github.com/actionk)",
     "dependencies": {}
