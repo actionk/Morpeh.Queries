@@ -2,8 +2,8 @@
     "name": "com.actionik.morpeh.queries",
     "displayName": "Morpeh.Queries",
     "description": "Queries for Morpeh ECS",
-    "version": "2023.1",
-    "unity": "2021.3.0",
+    "version": "2023.1.1",
+    "unity": "2020.3",
     "license": "MIT",
     "author": "ActioNik (https://github.com/actionk)",
     "dependencies": {}
