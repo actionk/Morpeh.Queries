@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using Scellecs.Morpeh.Collections;
+#if MORPEH_BURST
 using Unity.Collections;
 using Unity.Jobs;
+#endif
 
 namespace Scellecs.Morpeh
 {
@@ -11,6 +13,8 @@ namespace Scellecs.Morpeh
 
         public World World { get; set; }
         protected float deltaTime;
+
+        public virtual bool IsUpdatedEveryFrame => true;
 
 #if UNITY_EDITOR
         private bool m_isConfiguringFinished;
@@ -25,6 +29,8 @@ namespace Scellecs.Morpeh
         }
 
         protected abstract void Configure();
+
+        protected QueryBuilder CreateQuery() => new QueryBuilder(this);
 
         public virtual void Dispose()
         {
@@ -41,9 +47,18 @@ namespace Scellecs.Morpeh
 #endif
         }
 
+        void IQuerySystem.AddExecutor(Action newQueryExecutor)
+        {
+#if UNITY_EDITOR
+            if (m_isConfiguringFinished)
+                throw new Exception($"You shouldn't add executors after [{nameof(Configure)}] finished, this leads to bugs!");
+#endif
+            m_executors.Add(newQueryExecutor);
+        }
+
 #if MORPEH_BURST
         /// <summary>
-        /// As the world can contain multple jobs, we have to wait until all of them are complete.
+        /// As the world can contain multiple jobs, we have to wait until all of them are complete.
         /// By default, we will be using World's JobHandle to wait for all the jobs. In this case, we combine the existing JobHandle
         /// from world and JobHandles from this world
         /// </summary>
@@ -51,13 +66,13 @@ namespace Scellecs.Morpeh
         {
             if (m_waitUntilAllPreviousJobsCompleted)
                 World.JobHandle.Complete();
-            
-            if (m_queryBuilderJobHandles.length == 0) 
+
+            if (m_queryBuilderJobHandles.length == 0)
                 return;
-            
+
             m_jobHandles.Clear();
             var hasWorldJobHandle = !World.JobHandle.IsCompleted;
-            
+
             // collecting unfinished jobs from this system
             for (var i = 0; i < m_queryBuilderJobHandles.length; i++)
             {
@@ -74,33 +89,17 @@ namespace Scellecs.Morpeh
 
             if (hasWorldJobHandle)
                 jobHandles[m_jobHandles.length] = World.JobHandle;
-            
+
             var allDependenciesJobHandle = JobHandle.CombineDependencies(jobHandles);
-            
+
             // if there is a job that has [WaitUntilInnerJobsCompleted] activated, we should force this system to wait until jobs are completed
             // otherwise, let the world wait for it in the end of the update (or until some other system wait for it)
             if (m_waitUntilAllInnerJobsCompleted)
                 allDependenciesJobHandle.Complete();
             else
                 World.JobHandle = allDependenciesJobHandle;
-            
+
             jobHandles.Dispose();
-        }
-
-        protected QueryBuilder CreateQuery()
-        {
-            return new QueryBuilder(this);
-        }
-
-        public virtual bool IsUpdatedEveryFrame => true;
-
-        void IQuerySystem.AddExecutor(Action newQueryExecutor)
-        {
-#if UNITY_EDITOR
-            if (m_isConfiguringFinished)
-                throw new Exception($"You shouldn't add executors after [{nameof(Configure)}] finished, this leads to bugs!");
-#endif
-            m_executors.Add(newQueryExecutor);
         }
 
         private readonly FastList<QueryBuilderJobHandle> m_queryBuilderJobHandles = new();

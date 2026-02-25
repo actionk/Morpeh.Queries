@@ -2,6 +2,8 @@
 
 Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.com/scellecs/morpeh).
 
+**Compatibility:** Morpeh **2024.1.1**
+
 * Lambda syntax for querying entities & their Components
 * Supporting jobs & burst
     * Automatic jobs scheduling
@@ -11,6 +13,8 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     * Entity Events
 
 ## Table of Contents
+
+- [Installation](#installation)
 
 - [Examples](#examples)
 - [Comparison & Performance](#comparison--performance)
@@ -22,8 +26,10 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
     - [.WithNone](#withnone)
     - [.With<T>](#with-t)
     - [.Without<T>](#without-t)
+    - [.Extend<T>](#extend-t)
     - [.Also](#also)
     - [.ForEach](#foreach)
+    - [.ForFirst](#forfirst)
     - [.ForEachParallel](#foreachparallel)
     - [.ForAll](#forall)
     - [.ForEachNative](#foreachnative)
@@ -39,10 +45,27 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
 - [Additions](#additions)
     - [Globals](#globals)
     - [Automatic Validation](#automatic-validation)
+    - [System Base Classes](#system-base-classes)
     - [OnAwake & OnUpdate](#onawake--onupdate)
     - [Custom systems that don't extend QuerySystem](#custom-systems-that-dont-extend-querysystem)
 - [Credits](#credits)
 - [License](#license)
+
+# Installation
+
+Add to your Unity project via the Unity Package Manager using the git URL:
+
+```
+https://github.com/actionk/Morpeh.Queries.git
+```
+
+Or add directly to your `Packages/manifest.json`:
+
+```json
+"com.actionik.morpeh.queries": "https://github.com/actionk/Morpeh.Queries.git"
+```
+
+**Requires:** [Morpeh ECS](https://github.com/scellecs/morpeh) **2024.1.1** installed in your project.
 
 # Examples
 
@@ -306,14 +329,30 @@ Equivalent to Morpeh's `Filter.With<T>`.
 
 Equivalent to Morpeh's `Filter.Without<T>`.
 
+## .Extend<T>
+
+Applies a custom `IFilterExtension` to the query. Useful for reusable filter logic shared across multiple queries.
+
+```csharp
+public struct AliveFilter : IFilterExtension
+{
+    public FilterBuilder Extend(FilterBuilder builder) => builder.Without<Dead>();
+}
+
+CreateQuery()
+    .With<PlayerComponent>()
+    .Extend<AliveFilter>()
+    .ForEach(...)
+```
+
 ## .Also
 
-You can specify your custom filter if you want:
+You can specify custom filter logic inline using a delegate. Note: the delegate must return the modified `FilterBuilder`.
 
 ```csharp
 CreateQuery()
     .WithAll<TestComponent, DamageComponent>()
-    .Also(filter => filter.Without<T>())
+    .Also(filter => filter.Without<Dead>())
     .ForEach(...)
 ```
 
@@ -334,6 +373,33 @@ Supported up to 8 components (you can extend it if you want)
 
 * You can only receive components as **ref**
 * You can't receive Aspects
+
+## .ForFirst
+
+Same signature as `ForEach`, but the lambda is only called for the *first* matching entity. Useful for singleton-like entities (e.g. a single local player).
+
+```csharp
+// Entity + 2 components
+CreateQuery()
+    .With<LocalPlayer>()
+    .With<MoveInput>()
+    .ForFirst((Entity entity, ref LocalPlayer player, ref MoveInput input) =>
+    {
+        input.direction = ReadInput();
+    });
+
+// Components only (no entity parameter)
+CreateQuery()
+    .With<Settings>()
+    .ForFirst((ref Settings settings) =>
+    {
+        settings.volume = newVolume;
+    });
+```
+
+Supported up to 4 components (with or without the `Entity` parameter).
+
+Returns silently if the filter is empty — no exceptions.
 
 ## .ForEachParallel
 
@@ -540,11 +606,41 @@ CreateQuery()
     });
 ```
 
+## System Base Classes
+
+In addition to `QuerySystem` (which implements `ISystem` / UpdateSystem), the following ready-made base classes are provided:
+
+| Class | Implements | Runs in |
+|---|---|---|
+| `QuerySystem` | `ISystem` | `Update` |
+| `QueryFixedSystem` | `ISystem` + `IFixedSystem` | `FixedUpdate` |
+| `QueryLateSystem` | `ISystem` + `ILateSystem` | `LateUpdate` |
+| `QueryCleanupSystem` | `ISystem` + `ICleanupSystem` | Cleanup pass |
+
+Usage is identical to `QuerySystem` — just extend the appropriate class:
+
+```csharp
+public class GravitySystem : QueryFixedSystem
+{
+    protected override void Configure()
+    {
+        CreateQuery()
+            .With<Rigidbody>()
+            .With<Grounded>()
+            .ForEach((ref Rigidbody rb, ref Grounded grounded) =>
+            {
+                if (!grounded.value)
+                    rb.velocity += Physics.gravity * deltaTime;
+            });
+    }
+}
+```
+
 ## OnAwake & OnUpdate
 
 You can override `OnAwake` & `OnUpdate` methods of `QuerySystem` if you want to:
 
-```charp
+```csharp
 public override void OnAwake()
 {
     base.OnAwake();

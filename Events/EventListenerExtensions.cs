@@ -39,7 +39,7 @@ namespace Scellecs.Morpeh
         
         public delegate void ForEachDelegateWithEntity<in T>(Entity entity, T eventData) where T : IWorldEvent;
 
-        public static CompiledEventListener<EventWithEntity<T>> CompiledCompiledEventListener<T>(this CompiledEventListener<EventWithEntity<T>> eventListener, ForEachDelegateWithEntity<T> callback) where T : IWorldEvent
+        public static CompiledEventListener<EventWithEntity<T>> ForEach<T>(this CompiledEventListener<EventWithEntity<T>> eventListener, ForEachDelegateWithEntity<T> callback) where T : IWorldEvent
         {
             eventListener.querySystem.AddExecutor(() =>
             {

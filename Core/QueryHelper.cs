@@ -39,12 +39,18 @@ namespace Scellecs.Morpeh
             foreach (var requestedTypeInfo in requestedTypeInfosToValidate)
             {
                 if (!compiledQuery.filter.includedTypeIdsLookup.IsSet(requestedTypeInfo.typeId))
+                {
                     Debug.LogError(
                         $"You're expecting a component [<b>{requestedTypeInfo.type.Name}</b>] in your query in [<b>{queryBuilder.System.GetType().Name}</b>], but the query is <b>missing</b> this parameter. Please add it to the query first!");
+                    hasProblems = true;
+                }
 
                 if (compiledQuery.filter.excludedTypeIdsLookup.IsSet(requestedTypeInfo.typeId))
+                {
                     Debug.LogError(
                         $"You're expecting a component [<b>{requestedTypeInfo.type.Name}</b>] in your query in [<b>{queryBuilder.System.GetType().Name}</b>], but the query is <b>deliberately excluded</b> this parameter. Please remove it from the query or from the ForEach lambda!");
+                    hasProblems = true;
+                }
             }
 
             if (hasProblems)

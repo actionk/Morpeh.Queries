@@ -11,9 +11,12 @@ namespace Scellecs.Morpeh
         
 #region Alternatives
 
-        public static QueryBuilder Also(this QueryBuilder queryBuilder, Action<FilterBuilder> filterCallback)
+        // FilterBuilder is a struct in Morpeh 2024.1.1+, so we need Func<FilterBuilder, FilterBuilder>
+        // to allow the callback to return the modified builder.
+        public static QueryBuilder Also(this QueryBuilder queryBuilder, Func<FilterBuilder, FilterBuilder> filterCallback)
         {
-            filterCallback?.Invoke(queryBuilder.filterBuilder);
+            if (filterCallback != null)
+                queryBuilder.filterBuilder = filterCallback(queryBuilder.filterBuilder);
             return queryBuilder;
         }
 
@@ -779,6 +782,223 @@ namespace Scellecs.Morpeh
                     ref var componentT8 = ref stashT8.Get(entity);
                     callback.Invoke(ref componentT1, ref componentT2, ref componentT3, ref componentT4, ref componentT5, ref componentT6, ref componentT7, ref componentT8);
                 }
+            });
+            return queryBuilder;
+        }
+
+#endregion
+
+#region ForFirst
+
+        // ------------------------------------------------- //
+        // Executes callback for the FIRST matching entity only.
+        // Ideal for singleton-component patterns (e.g. player, camera, config).
+        // ------------------------------------------------- //
+
+        // 0 components — entity only
+        public static QueryBuilder ForFirst(this QueryBuilder queryBuilder, Callbacks.E callback)
+        {
+            var filter = queryBuilder.Build();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                callback.Invoke(filter.filter.First());
+            });
+            return queryBuilder;
+        }
+
+        // ------------------------------------------------- //
+        // 1 component
+        // ------------------------------------------------- //
+
+        public static QueryBuilder ForFirst<T1>(this QueryBuilder queryBuilder, Callbacks.EC<T1> callback)
+            where T1 : struct, IComponent
+        {
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>());
+
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                var entity = filter.filter.First();
+                ref var componentT1 = ref stashT1.Get(entity);
+                callback.Invoke(entity, ref componentT1);
+            });
+            return queryBuilder;
+        }
+
+        public static QueryBuilder ForFirst<T1>(this QueryBuilder queryBuilder, Callbacks.C<T1> callback)
+            where T1 : struct, IComponent
+        {
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>());
+
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                var entity = filter.filter.First();
+                ref var componentT1 = ref stashT1.Get(entity);
+                callback.Invoke(ref componentT1);
+            });
+            return queryBuilder;
+        }
+
+        // ------------------------------------------------- //
+        // 2 components
+        // ------------------------------------------------- //
+
+        public static QueryBuilder ForFirst<T1, T2>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2> callback)
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+        {
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>());
+
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                var entity = filter.filter.First();
+                ref var componentT1 = ref stashT1.Get(entity);
+                ref var componentT2 = ref stashT2.Get(entity);
+                callback.Invoke(entity, ref componentT1, ref componentT2);
+            });
+            return queryBuilder;
+        }
+
+        public static QueryBuilder ForFirst<T1, T2>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2> callback)
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+        {
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>());
+
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                var entity = filter.filter.First();
+                ref var componentT1 = ref stashT1.Get(entity);
+                ref var componentT2 = ref stashT2.Get(entity);
+                callback.Invoke(ref componentT1, ref componentT2);
+            });
+            return queryBuilder;
+        }
+
+        // ------------------------------------------------- //
+        // 3 components
+        // ------------------------------------------------- //
+
+        public static QueryBuilder ForFirst<T1, T2, T3>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2, T3> callback)
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+            where T3 : struct, IComponent
+        {
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>());
+
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            var stashT3 = queryBuilder.World.GetStash<T3>();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                var entity = filter.filter.First();
+                ref var componentT1 = ref stashT1.Get(entity);
+                ref var componentT2 = ref stashT2.Get(entity);
+                ref var componentT3 = ref stashT3.Get(entity);
+                callback.Invoke(entity, ref componentT1, ref componentT2, ref componentT3);
+            });
+            return queryBuilder;
+        }
+
+        public static QueryBuilder ForFirst<T1, T2, T3>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2, T3> callback)
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+            where T3 : struct, IComponent
+        {
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>());
+
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            var stashT3 = queryBuilder.World.GetStash<T3>();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                var entity = filter.filter.First();
+                ref var componentT1 = ref stashT1.Get(entity);
+                ref var componentT2 = ref stashT2.Get(entity);
+                ref var componentT3 = ref stashT3.Get(entity);
+                callback.Invoke(ref componentT1, ref componentT2, ref componentT3);
+            });
+            return queryBuilder;
+        }
+
+        // ------------------------------------------------- //
+        // 4 components
+        // ------------------------------------------------- //
+
+        public static QueryBuilder ForFirst<T1, T2, T3, T4>(this QueryBuilder queryBuilder, Callbacks.EC<T1, T2, T3, T4> callback)
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+            where T3 : struct, IComponent
+            where T4 : struct, IComponent
+        {
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>());
+
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            var stashT3 = queryBuilder.World.GetStash<T3>();
+            var stashT4 = queryBuilder.World.GetStash<T4>();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                var entity = filter.filter.First();
+                ref var componentT1 = ref stashT1.Get(entity);
+                ref var componentT2 = ref stashT2.Get(entity);
+                ref var componentT3 = ref stashT3.Get(entity);
+                ref var componentT4 = ref stashT4.Get(entity);
+                callback.Invoke(entity, ref componentT1, ref componentT2, ref componentT3, ref componentT4);
+            });
+            return queryBuilder;
+        }
+
+        public static QueryBuilder ForFirst<T1, T2, T3, T4>(this QueryBuilder queryBuilder, Callbacks.C<T1, T2, T3, T4> callback)
+            where T1 : struct, IComponent
+            where T2 : struct, IComponent
+            where T3 : struct, IComponent
+            where T4 : struct, IComponent
+        {
+            var filter = queryBuilder.Build();
+            if (!queryBuilder.skipValidationEnabled)
+                QueryHelper.ValidateRequest(queryBuilder, filter, QueryHelper.GetRequestedTypeInfo<T1>(), QueryHelper.GetRequestedTypeInfo<T2>(), QueryHelper.GetRequestedTypeInfo<T3>(), QueryHelper.GetRequestedTypeInfo<T4>());
+
+            var stashT1 = queryBuilder.World.GetStash<T1>();
+            var stashT2 = queryBuilder.World.GetStash<T2>();
+            var stashT3 = queryBuilder.World.GetStash<T3>();
+            var stashT4 = queryBuilder.World.GetStash<T4>();
+            queryBuilder.System.AddExecutor(() =>
+            {
+                if (filter.IsEmpty()) return;
+                var entity = filter.filter.First();
+                ref var componentT1 = ref stashT1.Get(entity);
+                ref var componentT2 = ref stashT2.Get(entity);
+                ref var componentT3 = ref stashT3.Get(entity);
+                ref var componentT4 = ref stashT4.Get(entity);
+                callback.Invoke(ref componentT1, ref componentT2, ref componentT3, ref componentT4);
             });
             return queryBuilder;
         }
