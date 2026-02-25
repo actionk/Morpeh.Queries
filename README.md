@@ -53,19 +53,24 @@ Alternative to built-in filters using lambdas for [Morpeh ECS](https://github.co
 
 # Installation
 
-Add to your Unity project via the Unity Package Manager using the git URL:
+**Requires:** [Morpeh ECS](https://github.com/scellecs/morpeh) **2024.1.1** installed in your project.
 
+### Option 1: Unity Package Manager (UPM)
+
+1. Open **Window → Package Manager**
+2. Click **+** → **Add package from git URL...**
+3. Enter:
 ```
-https://github.com/actionk/Morpeh.Queries.git
+https://github.com/actionk/Morpeh.Queries.git#2024.1.1
 ```
 
-Or add directly to your `Packages/manifest.json`:
+### Option 2: manifest.json
+
+Add to your `Packages/manifest.json`:
 
 ```json
-"com.actionik.morpeh.queries": "https://github.com/actionk/Morpeh.Queries.git"
+"com.actionik.morpeh.queries": "https://github.com/actionk/Morpeh.Queries.git#2024.1.1"
 ```
-
-**Requires:** [Morpeh ECS](https://github.com/scellecs/morpeh) **2024.1.1** installed in your project.
 
 # Examples
 
