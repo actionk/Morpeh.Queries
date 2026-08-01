@@ -58,8 +58,10 @@ namespace Scellecs.Morpeh
 
             public void Dispose()
             {
+#if UNITY_EDITOR
                 if (m_useEntityEnumerator)
                     m_entityEnumerator.Dispose();
+#endif
             }
         }
 
